@@ -284,57 +284,8 @@ export const executeOperation = async (
 };
 
 // =================================================================
-// NFT Minting Example
+// NEROWORKS SMART CONTRACT FUNCTIONS
 // =================================================================
-
-/**
- * Mint an NFT using AA and paymaster
- * 
- * @param accountSigner The signer to use
- * @param recipientAddress Recipient of the NFT
- * @param metadataUri Metadata URI for the NFT
- * @param paymentType Payment type (0=free, 1=prepay, 2=postpay) 
- * @param selectedToken Token address for ERC20 payments
- * @param options Additional options
- * @returns Transaction result
- */
-// Add NFT ABI definition at the top of the file
-const NFT_ABI = [
-  "function mint(address to, string memory uri) external",
-  "function tokenURI(uint256 tokenId) external view returns (string memory)",
-  "function balanceOf(address owner) external view returns (uint256)"
-];
- 
-export const mintNFT = async (
-  accountSigner: ethers.Signer,
-  recipientAddress: string,
-  metadataUri: string,
-  paymentType: number = 0,
-  selectedToken: string = '',
-  options?: {
-    apiKey?: string;
-    gasMultiplier?: number;
-  }
-) => {
-  try {
-    // Execute the mint function
-    return await executeOperation(
-      accountSigner,
-
-      
-      CONTRACT_ADDRESSES.nftContract,
-      NFT_ABI,
-      'mint',
-      [recipientAddress, metadataUri],
-      paymentType,
-      selectedToken,
-      options
-    );
-  } catch (error) {
-    console.error("Error minting NFT:", error);
-    throw error;
-  }
-};
 
 // register freelancer
 export const registerFreelancer = async (
@@ -371,6 +322,239 @@ export const registerFreelancer = async (
     throw error;
   }
 };
+
+// Register Employer
+export const registerEmployer = async (
+  accountSigner: ethers.Signer,
+  name: string,
+  industry: string,
+  country: string,
+  imageURI: string,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'registerEmployer',
+      [name, industry, country, imageURI],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error registering employer:", error);
+    throw error;
+  }
+};
+
+// Create Job
+export const createJob = async (
+  accountSigner: ethers.Signer,
+  title: string,
+  description: string,
+  budget: ethers.BigNumberish,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'createJob',
+      [title, description, budget],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error creating job:", error);
+    throw error;
+  }
+};
+
+// Apply for Job
+export const applyForJob = async (
+  accountSigner: ethers.Signer,
+  jobId: number,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'applyForJob',
+      [jobId],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error applying for job:", error);
+    throw error;
+  }
+};
+
+// Hire Freelancer
+export const hireFreelancer = async (
+  accountSigner: ethers.Signer,
+  jobId: number,
+  freelancerAddress: string,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'hireFreelancer',
+      [jobId, freelancerAddress],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error hiring freelancer:", error);
+    throw error;
+  }
+};
+
+// Deposit Funds
+export const depositFunds = async (
+  accountSigner: ethers.Signer,
+  jobId: number,
+  value: ethers.BigNumberish, 
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'depositFunds',
+      [jobId],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error depositing funds:", error);
+    throw error;
+  }
+};
+
+// Release Escrow
+export const releaseEscrow = async (
+  accountSigner: ethers.Signer,
+  jobId: number,
+  freelancerAddress: string,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'releaseEscrow',
+      [jobId, freelancerAddress],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error releasing escrow:", error);
+    throw error;
+  }
+};
+
+// Complete Job
+export const completeJob = async (
+  accountSigner: ethers.Signer,
+  jobId: number,
+  freelancerAddress: string,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'completeJob',
+      [jobId, freelancerAddress],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error completing job:", error);
+    throw error;
+  }
+};
+
+// Withdraw Earnings
+export const withdrawEarnings = async (
+  accountSigner: ethers.Signer,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'withdrawEarnings',
+      [],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error withdrawing earnings:", error);
+    throw error;
+  }
+};
+
 
 
 // =================================================================
