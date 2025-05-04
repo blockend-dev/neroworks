@@ -296,7 +296,7 @@ export const registerFreelancer = async (
   freelancerGigTitle : string,
   freelancerGigDesc:string,
   images:string[],
-  starting_price:any,
+  starting_price:number,
   paymentType: number = 0,
   selectedToken: string = '',
   options?: {
@@ -557,52 +557,52 @@ export const withdrawEarnings = async (
 
 // ========== NEROWORKS SMART CONTRACT READ-ONLY FUNCTIONS ==========
 
-export const getAllJobs = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const getAllJobs = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.allJobs();
 };
 
-export const getAllFreelancers = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const getAllFreelancers = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.getAllFreelancers();
 };
 
-export const getFreelancerByAddress = async (provider: ethers.providers.Provider, address: string) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const getFreelancerByAddress = async (signer: ethers.providers.JsonRpcSigner, address: string) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.getFreelancerByAddress(address);
 };
 
-export const getEmployerByAddress = async (provider: ethers.providers.Provider, address: string) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const getEmployerByAddress = async (signer: ethers.providers.JsonRpcSigner, address: string) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.getEmployerByAddress(address);
 };
 
 export const getEmployerEscrow = async (
-  provider: ethers.providers.Provider,
+  signer: ethers.providers.JsonRpcSigner,
   employer: string,
   jobId: number
 ) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.getEmployerEscrow(employer, jobId);
 };
 
-export const totalFreelancers = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const totalFreelancers = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.totalFreelancers();
 };
 
-export const totalEmployers = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const totalEmployers = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.totalEmployers();
 };
 
-export const totalJobs = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const totalJobs = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.totalJobs();
 };
 
-export const totalCompletedJobs = async (provider: ethers.providers.Provider) => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+export const totalCompletedJobs = async (signer: ethers.providers.JsonRpcSigner) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.totalCompletedJobs();
 };
 

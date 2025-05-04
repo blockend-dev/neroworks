@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { mintNFT,registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
+import {registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
 import PaymentTypeSelector from './PaymentTypeSelector';
 import { ethers } from 'ethers';
+import { getSigner } from '../../utils/aaUtils';
+
 
 interface NFTMinterProps {
   signer?: ethers.Signer;

@@ -27,11 +27,11 @@ export const NERO_CHAIN_CONFIG = {
     tokenPaymaster: "0x5a6680dFd4a77FEea0A7be291147768EaA2414ad",
     
     // Example NFT contract address - replace with your own
-    nftContract: process.env.REACT_APP_NFT_CONTRACT || "0x63f1f7c6a24294a874d7c8ea289e4624f84b48cb",
+    nftContract: process.env.NEXT_PUBLIC_NFT_CONTRACT || "0x63f1f7c6a24294a874d7c8ea289e4624f84b48cb",
   };
   
   // API key management for Paymaster
-  export let API_KEY: string = process.env.REACT_APP_PAYMASTER_API_KEY || "";
+  export let API_KEY: string = process.env.NEXT_PUBLIC_REACT_APP_PAYMASTER_API_KEY || "";
 
   // Helper function to check if we're on the client side
 const isClient = () => typeof window !== 'undefined';
