@@ -1,0 +1,929 @@
+[
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "employerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "AppliedForJob",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "EmployerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "EmployerRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string[]",
+          "name": "name",
+          "type": "string[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FreelancerRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsReleased",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "payment",
+          "type": "uint256"
+        }
+      ],
+      "name": "JobCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        }
+      ],
+      "name": "JobCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawFund",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "allFreelancerAddresses",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "allJobs",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "id",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address",
+              "name": "employer",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "budget",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "completed",
+              "type": "bool"
+            },
+            {
+              "internalType": "address[]",
+              "name": "applicants",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address",
+              "name": "hiredFreelancer",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct Djob.Job[]",
+          "name": "props",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "applyForJob",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "completeJob",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_budget",
+          "type": "uint256"
+        }
+      ],
+      "name": "createJob",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "depositFunds",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "employers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "employerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "industry",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "image",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "registered",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registration_date",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "freelancers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "skills",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "gigTitle",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "gitDescription",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "jobsCompleted",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "registered",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registration_date",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "starting_price",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllFreelancers",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "freelancerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "skills",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "country",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "gigTitle",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "gitDescription",
+              "type": "string"
+            },
+            {
+              "internalType": "string[]",
+              "name": "images",
+              "type": "string[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "jobsCompleted",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "registered",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "registration_date",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "starting_price",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Djob.Freelancer[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employer",
+          "type": "address"
+        }
+      ],
+      "name": "getEmployerByAddress",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "employerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "industry",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "country",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "image",
+              "type": "string"
+            },
+            {
+              "internalType": "bool",
+              "name": "registered",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "registration_date",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Djob.Employer",
+          "name": "props",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_job_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEmployerEscrow",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_freelancer",
+          "type": "address"
+        }
+      ],
+      "name": "getFreelancerByAddress",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "freelancerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "skills",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "country",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "gigTitle",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "gitDescription",
+              "type": "string"
+            },
+            {
+              "internalType": "string[]",
+              "name": "images",
+              "type": "string[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "jobsCompleted",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "registered",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "registration_date",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "starting_price",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Djob.Freelancer",
+          "name": "props",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobByID",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "id",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address",
+              "name": "employer",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "budget",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "completed",
+              "type": "bool"
+            },
+            {
+              "internalType": "address[]",
+              "name": "applicants",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address",
+              "name": "hiredFreelancer",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct Djob.Job",
+          "name": "props",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "hireFreelancer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_industry",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_country",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_imageURI",
+          "type": "string"
+        }
+      ],
+      "name": "registerEmployer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_skills",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_country",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_gigTitle",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_gigDesc",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "_images",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_starting_price",
+          "type": "uint256"
+        }
+      ],
+      "name": "registerFreelancer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "freelancerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "releaseEscrow",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalCompletedJobs",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalEmployers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalFreelancers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalJobs",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawEarnings",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
