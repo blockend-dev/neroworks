@@ -555,7 +555,56 @@ export const withdrawEarnings = async (
   }
 };
 
+// ========== NEROWORKS SMART CONTRACT READ-ONLY FUNCTIONS ==========
 
+export const getAllJobs = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.allJobs();
+};
+
+export const getAllFreelancers = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.getAllFreelancers();
+};
+
+export const getFreelancerByAddress = async (provider: ethers.providers.Provider, address: string) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.getFreelancerByAddress(address);
+};
+
+export const getEmployerByAddress = async (provider: ethers.providers.Provider, address: string) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.getEmployerByAddress(address);
+};
+
+export const getEmployerEscrow = async (
+  provider: ethers.providers.Provider,
+  employer: string,
+  jobId: number
+) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.getEmployerEscrow(employer, jobId);
+};
+
+export const totalFreelancers = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.totalFreelancers();
+};
+
+export const totalEmployers = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.totalEmployers();
+};
+
+export const totalJobs = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.totalJobs();
+};
+
+export const totalCompletedJobs = async (provider: ethers.providers.Provider) => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, provider);
+  return await contract.totalCompletedJobs();
+};
 
 // =================================================================
 // Token Support
