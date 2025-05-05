@@ -1,14 +1,15 @@
 "use client"
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { getSigner } from '../../utils/aaUtils';
 import { registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
+import { useRouter } from 'next/navigation';
 
 
-const RegisterFreelancer = ({signer} :any) => {
+const RegisterFreelancer = ({ signer }: any) => {
   const [freelancerName, setFreelancerName] = useState('');
   const [skills, setSkills] = useState('');
   const [country, setCountry] = useState('');
@@ -19,15 +20,16 @@ const RegisterFreelancer = ({signer} :any) => {
   const [loading, setLoading] = useState(false);
   const [imageUri, setImageUri] = useState<string>('');
 
-  
-  
+
+
 
   // Pinata API Key and Secret
   const pinataApiKey = process.env.NEXT_PUBLIC_PINATA_KEY;
   const pinataSecretApiKey = process.env.NEXT_PUBLIC_SECRET_KEY;
+  const router = useRouter();
 
 
-   
+
   // Handle image upload to Pinata
   const handleImageUpload = async (file: File) => {
     setLoading(true);
@@ -47,8 +49,12 @@ const RegisterFreelancer = ({signer} :any) => {
       );
 
       setImageUri(`https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`);
-      console.log(response,'res')
+      console.log(response, 'res')
       toast.success('Image uploaded successfully!');
+      
+      setTimeout(() => {
+        router.push('/freelancer-dashboard');
+      }, 3000);
     } catch (error) {
       toast.error('Error uploading image!');
     } finally {
@@ -62,22 +68,27 @@ const RegisterFreelancer = ({signer} :any) => {
     localStorage.removeItem('user_role');
 
     if (!freelancerName || !skills || !country || !gigTitle
-       || !gigDesc || !image || !startingPrice || !signer) {
+      || !gigDesc || !image || !startingPrice || !signer) {
       toast.error('All fields are required!');
       return;
     }
+    setLoading(true);
 
     try {
       // Call the registerFreelancer function from aaUtils
       const price = ethers.utils.parseEther(startingPrice.toString())
       const test = await getSigner()
-      await registerFreelancer(test,freelancerName, skills, country, 
-        gigTitle, gigDesc, [imageUri,imageUri],price);
+      await registerFreelancer(test, freelancerName, skills, country,
+        gigTitle, gigDesc, [imageUri, imageUri], price);
 
       toast.success('Freelancer registered successfully!');
     } catch (error) {
       toast.error('Error registering freelancer!');
       console.error(error);
+    }
+    finally {
+      setLoading(false);
+
     }
   };
 
@@ -151,8 +162,8 @@ const RegisterFreelancer = ({signer} :any) => {
           />
         </div>
 
-          {/* starting price */}
-          <div className="mb-4">
+        {/* starting price */}
+        <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="gigTitle">
             Starting Price(ETH)
           </label>
@@ -206,11 +217,14 @@ const RegisterFreelancer = ({signer} :any) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition 
+      ${loading ? 'bg-blue-400 cursor-not-allowed' : 'hover:bg-blue-700'}`}
           >
-            Register Freelancer
+            {loading ? 'Registering...' : 'Register Freelancer'}
           </button>
         </div>
+
       </form>
     </motion.div>
   );

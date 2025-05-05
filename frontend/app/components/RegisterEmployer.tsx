@@ -5,13 +5,15 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { registerEmployer } from '../../utils/aaUtils';
 import { ethers } from 'ethers';
+import { useRouter } from 'next/navigation';
+
 
 interface NFTMinterProps {
   signer?: ethers.Signer;
   aaWalletAddress?: string;
 }
 
-const RegisterEmployer = ({signer} :any) => {
+const RegisterEmployer = ({ signer }: any) => {
   const [employerName, setEmployerName] = useState('');
   const [industry, setIndustry] = useState('');
   const [country, setCountry] = useState('');
@@ -22,6 +24,8 @@ const RegisterEmployer = ({signer} :any) => {
   // Pinata API Key and Secret
   const pinataApiKey = process.env.NEXT_PUBLIC_PINATA_KEY;
   const pinataSecretApiKey = process.env.NEXT_PUBLIC_SECRET_KEY;
+  
+  const router = useRouter();
 
   // Handle image upload to Pinata
   const handleImageUpload = async (file: File) => {
@@ -56,7 +60,7 @@ const RegisterEmployer = ({signer} :any) => {
     e.preventDefault();
     localStorage.removeItem('user_role');
 
-    if(!signer){
+    if (!signer) {
       toast.error('Invalid signer!');
       return;
     }
@@ -65,15 +69,23 @@ const RegisterEmployer = ({signer} :any) => {
       toast.error('All fields are required!');
       return;
     }
+    setLoading(true);
 
     try {
       // Call the registerEmployer function from aaUtils
-      await registerEmployer(signer,employerName, industry, country, imageUri);
+      await registerEmployer(signer, employerName, industry, country, imageUri);
 
       toast.success('Employer registered successfully!');
+
+      setTimeout(() => {
+        router.push('/employer-dashboard');
+      }, 3000);
     } catch (error) {
       toast.error('Error registering employer!');
       console.error(error);
+    } finally{
+    setLoading(false);
+
     }
   };
 
@@ -158,11 +170,14 @@ const RegisterEmployer = ({signer} :any) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition 
+      ${loading ? 'bg-blue-400 cursor-not-allowed' : 'hover:bg-blue-700'}`}
           >
-            Register Employer
+            {loading ? 'Registering...' : 'Register Employer'}
           </button>
         </div>
+
       </form>
     </motion.div>
   );
