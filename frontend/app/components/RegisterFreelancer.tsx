@@ -59,6 +59,7 @@ const RegisterFreelancer = ({signer} :any) => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    localStorage.removeItem('user_role');
 
     if (!freelancerName || !skills || !country || !gigTitle
        || !gigDesc || !image || !startingPrice || !signer) {

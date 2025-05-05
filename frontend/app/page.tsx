@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <div>
       <WalletConnect onWalletConnected={handleWalletConnected} />
-      <HomeHero />
+      <HomeHero signer={signer} aaAddress={aaAddress} />
       <HowItWorks />
       <HomeCTA />
     </div>

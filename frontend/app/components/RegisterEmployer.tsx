@@ -54,6 +54,7 @@ const RegisterEmployer = ({signer} :any) => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    localStorage.removeItem('user_role');
 
     if(!signer){
       toast.error('Invalid signer!');

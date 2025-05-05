@@ -10,7 +10,6 @@ import { getSigner, getSupportedTokens, initAAClient, initAABuilder } from '@/ut
 import WalletConnect from '../components/WalletConnect';
 
 
-
 export default function FreelancerDashboard() {
     const [freelancer, setFreelancer] = useState<any>(null);
     // State to track wallet connection
