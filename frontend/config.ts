@@ -27,7 +27,7 @@ export const NERO_CHAIN_CONFIG = {
     tokenPaymaster: "0x5a6680dFd4a77FEea0A7be291147768EaA2414ad",
     
     // Example NFT contract address - replace with your own
-    nftContract: process.env.NEXT_PUBLIC_NFT_CONTRACT || "0x63f1f7c6a24294a874d7c8ea289e4624f84b48cb",
+    nftContract: process.env.NEXT_PUBLIC_NFT_CONTRACT || "0xFAb2a02E15dCd2F7590b960854F950904d84fc6a",
   };
   
   // API key management for Paymaster

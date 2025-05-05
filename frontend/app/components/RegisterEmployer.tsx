@@ -4,118 +4,24 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { registerEmployer } from '../../utils/aaUtils';
-import { registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
-import PaymentTypeSelector from './PaymentTypeSelector';
 import { ethers } from 'ethers';
-import { getSigner } from '../../utils/aaUtils';
-
 
 interface NFTMinterProps {
   signer?: ethers.Signer;
   aaWalletAddress?: string;
 }
 
-const RegisterEmployer = () => {
+const RegisterEmployer = ({signer} :any) => {
   const [employerName, setEmployerName] = useState('');
   const [industry, setIndustry] = useState('');
   const [country, setCountry] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [imageUri, setImageUri] = useState<string>('');
-  const [signer , setSigner] = useState<ethers.providers.JsonRpcSigner | null>(null)
-  // Payment type state
-  const [paymentType, setPaymentType] = useState(0);
-  const [selectedToken, setSelectedToken] = useState('');
-  const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
-
-  // UI state
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
   // Pinata API Key and Secret
   const pinataApiKey = process.env.NEXT_PUBLIC_PINATA_KEY;
   const pinataSecretApiKey = process.env.NEXT_PUBLIC_SECRET_KEY;
-
-  // Load supported tokens when component mounts and signer is available
-  useEffect(() => {
-    const loadTokens = async () => {
-    const signer = await getSigner()
-    setSigner(signer)
-      // Only run if signer is defined
-      if (signer) {
-        try {
-          // Check if signer has getAddress method
-          if (typeof signer.getAddress !== 'function') {
-            console.error("Invalid signer: missing getAddress method");
-            setError("Wallet connection issue: please reconnect your wallet");
-            return;
-          }
-
-          // Verify signer is still connected by calling getAddress
-          await signer.getAddress();
-
-          // If connected, fetch tokens
-          fetchSupportedTokens();
-        } catch (error) {
-          console.error("Signer validation error:", error);
-          setError("Wallet connection issue: please reconnect your wallet");
-        }
-      } else {
-        // Reset tokens if signer is not available
-        setSupportedTokens([]);
-        console.log("Signer not available, tokens reset");
-      }
-    };
-
-    loadTokens();
-  }, [signer]);
-
-    const fetchSupportedTokens = async () => {
-      if (!signer) {
-        console.log("Signer not available");
-        return;
-      }
-  
-      // Verify signer has getAddress method
-      if (typeof signer.getAddress !== 'function') {
-        console.error("Invalid signer: missing getAddress method");
-        setError("Wallet connection issue: please reconnect your wallet");
-        return;
-      }
-  
-      try {
-        setIsFetchingTokens(true);
-        setError(null);
-  
-        // This is a placeholder implementation
-        // Replace with your implementation based on the tutorial
-        const client = await initAAClient(signer);
-        const builder = await initAABuilder(signer);
-        
-        // Fetch supported tokens
-        const tokens = await getSupportedTokens(client, builder);
-        setSupportedTokens(tokens);
-      } catch (error: any) {
-        console.error("Error fetching supported tokens:", error);
-        setError(`Token loading error: ${error.message || "Unknown error"}`);
-      } finally {
-        setIsFetchingTokens(false);
-      }
-    };
-  
-    /**
-     * Handle payment type change
-     */
-    const handlePaymentTypeChange = (type: number, token?: string) => {
-      setPaymentType(type);
-      if (token) {
-        setSelectedToken(token);
-      } else {
-        setSelectedToken('');
-      }
-    };
 
   // Handle image upload to Pinata
   const handleImageUpload = async (file: File) => {

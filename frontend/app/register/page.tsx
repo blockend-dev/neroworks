@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import RegisterFreelancer from '@/app/components/RegisterFreelancer';
 import RegisterEmployer from '@/app/components/RegisterEmployer';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import WalletConnect from '@/app/components/WalletConnect';
 import { ethers } from 'ethers';
 import { getSigner } from '@/utils/aaUtils';
@@ -25,6 +25,7 @@ export default function RegisterPage() {
     const storedRole = localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
     setRole(storedRole);
   }, []);
+
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
     const loadTokens = async () => {
@@ -114,7 +115,7 @@ export default function RegisterPage() {
   return (
     <>
       <WalletConnect onWalletConnected={handleWalletConnected} />
-      {role === 'freelancer' ? <RegisterFreelancer signer={signer} /> : <RegisterEmployer />}
+      {role === 'freelancer' ? <RegisterFreelancer signer={signer} /> : <RegisterEmployer signer={signer} />}
 
     </>
   );

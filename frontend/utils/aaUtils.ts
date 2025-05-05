@@ -296,7 +296,7 @@ export const registerFreelancer = async (
   freelancerGigTitle : string,
   freelancerGigDesc:string,
   images:string[],
-  starting_price:number,
+  starting_price:BigNumber,
   paymentType: number = 0,
   selectedToken: string = '',
   options?: {

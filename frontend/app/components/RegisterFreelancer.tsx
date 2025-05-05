@@ -68,8 +68,10 @@ const RegisterFreelancer = ({signer} :any) => {
 
     try {
       // Call the registerFreelancer function from aaUtils
-      await registerFreelancer(signer,freelancerName, skills, country, 
-        gigTitle, gigDesc, [imageUri,imageUri],startingPrice);
+      const price = ethers.utils.parseEther(startingPrice.toString())
+      const test = await getSigner()
+      await registerFreelancer(test,freelancerName, skills, country, 
+        gigTitle, gigDesc, [imageUri,imageUri],price);
 
       toast.success('Freelancer registered successfully!');
     } catch (error) {
