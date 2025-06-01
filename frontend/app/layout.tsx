@@ -4,7 +4,7 @@ import "./globals.css";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import Navbar from "./components/Navbar";
-
+import { WalletProvider } from "./contexts/WalletContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata : Metadata = {
+export const metadata: Metadata = {
   title: 'Neroworks',
   description: 'Trustless freelance marketplace',
 };
@@ -31,9 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <WalletProvider>
           <Navbar /> {/* Conditionally hidden inside Navbar itself */}
-        {children}
-        <ToastContainer />
+          {children}
+          <ToastContainer />
+        </WalletProvider>
+
       </body>
     </html>
   );

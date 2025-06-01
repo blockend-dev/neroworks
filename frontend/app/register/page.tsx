@@ -11,7 +11,10 @@ import { getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaU
 
 
 export default function RegisterPage() {
-  const [role, setRole] = useState<'freelancer' | 'employer' | null>(null);
+const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
+  return localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
+});
+  const [isLoading, setIsLoading] = useState(true);
   // State to track wallet connection
   const [signer, setSigner] = useState<ethers.Signer | undefined>(undefined);
   const [eoaAddress, setEoaAddress] = useState<string>('');
@@ -20,11 +23,6 @@ export default function RegisterPage() {
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
 
-
-  useEffect(() => {
-    const storedRole = localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
-    setRole(storedRole);
-  }, []);
 
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {

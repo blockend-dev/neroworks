@@ -133,7 +133,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onWalletConnected }) => {
 
   return (
     <div className="wallet-container">
-      <h2>Account Abstraction Wallet</h2>
+      {/* <h2>Account Abstraction Wallet</h2> */}
       
       {error && (
         <div className="error-message">
@@ -160,7 +160,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onWalletConnected }) => {
         )}
       </div>
       
-      {isConnected && (
+      {/* {isConnected && (
         <div className="wallet-info">
           <div className="address-item">
             <strong>EOA Address:</strong> 
@@ -174,7 +174,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onWalletConnected }) => {
             This AA wallet is counterfactual and will be deployed on your first transaction.
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
