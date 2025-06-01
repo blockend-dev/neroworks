@@ -6,15 +6,16 @@ import { ethers } from 'ethers';
 import { getSigner, getSupportedTokens, initAAClient, initAABuilder } from '@/utils/aaUtils';
 import WalletConnect from '../components/WalletConnect';
 import { toast } from 'react-toastify';
-
-
+import { useWallet } from '../contexts/WalletContext';
 
 const EmployerDashboard = dynamic(() => import('@/app/components/EmployerDashboard'), { ssr: false });
 
 const EmployerDashboardPage = () => {
-  const [signer, setSigner] = useState<any | undefined>(undefined);
-  const [eoaAddress, setEoaAddress] = useState<string>('');
-  const [aaAddress, setAaAddress] = useState<string>('');
+    const {
+      aaAddress,
+      signer,
+    } = useWallet();
+
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
@@ -51,25 +52,6 @@ const EmployerDashboardPage = () => {
   }, [signer]);
 
 
-  /**
-* Handle wallet connection - important to get a real signer!
-*/
-  const handleWalletConnected = async (eoaAddr: string, aaAddr: string) => {
-    try {
-      // Get the real signer from the wallet - don't use mock signers!
-      const realSigner = await getSigner();
-
-      setEoaAddress(eoaAddr);
-      setAaAddress(aaAddr);
-      setSigner(realSigner);
-
-      toast.success('Wallet connected successfully!');
-    } catch (error) {
-      console.error("Error getting signer:", error);
-      toast.error('Failed to get wallet signer. Please try again.');
-    }
-  };
-
   const fetchSupportedTokens = async () => {
     if (!signer) {
       console.log("Signer not available");
@@ -103,7 +85,6 @@ const EmployerDashboardPage = () => {
 
   return (
     <>
-      <WalletConnect onWalletConnected={handleWalletConnected} />
       <EmployerDashboard signer={signer} aadresss={aaAddress} />
 
     </>

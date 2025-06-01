@@ -3,25 +3,29 @@
 import { useEffect, useState } from 'react';
 import RegisterFreelancer from '@/app/components/RegisterFreelancer';
 import RegisterEmployer from '@/app/components/RegisterEmployer';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import WalletConnect from '@/app/components/WalletConnect';
 import { ethers } from 'ethers';
 import { getSigner } from '@/utils/aaUtils';
 import { getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
+import Link from 'next/link';
+import { useWallet } from '../contexts/WalletContext';
 
 
 export default function RegisterPage() {
-const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
-  return localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
-});
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+        aaAddress,
+        signer,
+        isLoading
+      } = useWallet();
+
+  const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
+    return localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
+  });
   // State to track wallet connection
-  const [signer, setSigner] = useState<ethers.Signer | undefined>(undefined);
   const [eoaAddress, setEoaAddress] = useState<string>('');
-  const [aaAddress, setAaAddress] = useState<string>('');
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
-
 
 
   // Load supported tokens when component mounts and signer is available
@@ -57,26 +61,8 @@ const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
   }, [signer]);
 
 
-  /**
-* Handle wallet connection - important to get a real signer!
-*/
-  const handleWalletConnected = async (eoaAddr: string, aaAddr: string) => {
-    try {
-      // Get the real signer from the wallet - don't use mock signers!
-      const realSigner = await getSigner();
-
-      setEoaAddress(eoaAddr);
-      setAaAddress(aaAddr);
-      setSigner(realSigner);
-
-      toast.success('Wallet connected successfully!');
-    } catch (error) {
-      console.error("Error getting signer:", error);
-      toast.error('Failed to get wallet signer. Please try again.');
-    }
-  };
-
   const fetchSupportedTokens = async () => {
+     const signer = await getSigner();
     if (!signer) {
       console.log("Signer not available");
       return;
@@ -108,11 +94,16 @@ const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
   };
 
 
-  if (!role) return <p className="text-center py-20">No role selected. Please go back to the homepage.</p>;
-
+  if (!role) return (
+    <p className="text-center py-20">
+      No role selected. Please go back to the{' '}
+      <Link href="/" className="text-blue-600 hover:text-blue-800 hover:underline">
+        Homepage
+      </Link>
+    </p>
+  );
   return (
     <>
-      <WalletConnect onWalletConnected={handleWalletConnected} />
       {role === 'freelancer' ? <RegisterFreelancer signer={signer} aadresss={aaAddress} /> : <RegisterEmployer signer={signer} aadresss={aaAddress} />}
 
     </>

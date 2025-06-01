@@ -1,13 +1,10 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import { getSigner, getAAWalletAddress } from '../../utils/aaUtils';
 import { useWallet } from '../contexts/WalletContext';
 import { ethers } from 'ethers';
 
-interface WalletConnectProps {
-    onWalletConnected?: (eoaAddress: string, aaAddress: string) => void;
-}
-
-const WalletConnect: React.FC<WalletConnectProps> = () => {
+const WalletConnect = () => {
     const {
         isConnected,
         isLoading,
@@ -48,22 +45,22 @@ const WalletConnect: React.FC<WalletConnectProps> = () => {
             </div>
 
             {/* {isConnected && (
-        <div className="wallet-info">
-          <div className="address-item">
-            <strong>EOA Address:</strong> 
-            <span className="address">{eoaAddress}</span>
-          </div>
-          <div className="address-item">
-            <strong>AA Wallet Address:</strong> 
-            <span className="address">{aaAddress}</span>
-          </div>
-          <p className="note">
-            This AA wallet is counterfactual and will be deployed on your first transaction.
-          </p>
-        </div>
-      )} */}
+                <div className="wallet-info">
+                    <div className="address-item">
+                        <strong>EOA Address:</strong> 
+                        <span className="address">{eoaAddress}</span>
+                    </div>
+                    <div className="address-item">
+                        <strong>AA Wallet Address:</strong> 
+                        <span className="address">{aaAddress}</span>
+                    </div>
+                    <p className="note">
+                        This AA wallet is counterfactual and will be deployed on your first transaction.
+                    </p>
+                </div>
+            )} */}
         </div>
     );
 };
 
-export default WalletConnect; 
+export default WalletConnect;

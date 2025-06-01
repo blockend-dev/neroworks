@@ -52,9 +52,7 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
       console.log(response, 'res')
       toast.success('Image uploaded successfully!');
       
-      setTimeout(() => {
-        router.push('/freelancer-dashboard');
-      }, 3000);
+   
     } catch (error) {
       toast.error('Error uploading image!');
     } finally {
@@ -68,7 +66,7 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
     localStorage.removeItem('user_role');
 
     if (!freelancerName || !skills || !country || !gigTitle
-      || !gigDesc || !image || !startingPrice || !signer) {
+      || !gigDesc || !startingPrice || !signer) {
       toast.error('All fields are required!');
       return;
     }
@@ -79,7 +77,7 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
       const price = ethers.utils.parseEther(startingPrice.toString())
       const signer = await getSigner()
       const isEmployer = await getEmployerByAddress(signer, aadresss)
-      if(isEmployer){
+      if(isEmployer.employerAddress.toString() !== '0x0000000000000000000000000000000000000000'){
          toast.error('You already have an employer account!');
          return
       }
@@ -87,6 +85,9 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
         gigTitle, gigDesc, [imageUri, imageUri], price);
 
       toast.success('Freelancer registered successfully!');
+         setTimeout(() => {
+        router.push('/freelancer-dashboard');
+      }, 3000);
     } catch (error) {
       toast.error('Error registering freelancer!');
       console.error(error);
