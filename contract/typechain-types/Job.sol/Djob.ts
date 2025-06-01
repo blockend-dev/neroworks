@@ -68,6 +68,7 @@ export interface DjobInterface extends Interface {
       | "freelancers"
       | "getJobByID"
       | "owner"
+      | "roles"
       | "totalCompletedJobs"
       | "totalEmployers"
       | "totalFreelancers"
@@ -116,6 +117,7 @@ export interface DjobInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "roles", values: [AddressLike]): string;
   encodeFunctionData(
     functionFragment: "totalCompletedJobs",
     values?: undefined
@@ -151,6 +153,7 @@ export interface DjobInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getJobByID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "roles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalCompletedJobs",
     data: BytesLike
@@ -433,6 +436,8 @@ export interface Djob extends BaseContract {
 
   owner: TypedContractMethod<[], [string], "view">;
 
+  roles: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
   totalCompletedJobs: TypedContractMethod<[], [bigint], "view">;
 
   totalEmployers: TypedContractMethod<[], [bigint], "view">;
@@ -525,6 +530,9 @@ export interface Djob extends BaseContract {
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "roles"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalCompletedJobs"
   ): TypedContractMethod<[], [bigint], "view">;

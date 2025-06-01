@@ -25,6 +25,10 @@ declare module "hardhat/types/runtime" {
       name: "Djob",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Djob__factory>;
+    getContractFactory(
+      name: "RoleManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RoleManager__factory>;
 
     getContractAt(
       name: "Employers",
@@ -41,6 +45,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Djob>;
+    getContractAt(
+      name: "RoleManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RoleManager>;
 
     deployContract(
       name: "Employers",
@@ -54,6 +63,10 @@ declare module "hardhat/types/runtime" {
       name: "Djob",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Djob>;
+    deployContract(
+      name: "RoleManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RoleManager>;
 
     deployContract(
       name: "Employers",
@@ -70,6 +83,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Djob>;
+    deployContract(
+      name: "RoleManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RoleManager>;
 
     // default types
     getContractFactory(

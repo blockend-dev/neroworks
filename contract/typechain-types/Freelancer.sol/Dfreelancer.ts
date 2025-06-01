@@ -151,6 +151,7 @@ export interface DfreelancerInterface extends Interface {
       | "registerEmployer"
       | "registerFreelancer"
       | "releaseEscrow"
+      | "roles"
       | "totalCompletedJobs"
       | "totalEmployers"
       | "totalFreelancers"
@@ -236,6 +237,7 @@ export interface DfreelancerInterface extends Interface {
     functionFragment: "releaseEscrow",
     values: [BigNumberish, AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "roles", values: [AddressLike]): string;
   encodeFunctionData(
     functionFragment: "totalCompletedJobs",
     values?: undefined
@@ -311,6 +313,7 @@ export interface DfreelancerInterface extends Interface {
     functionFragment: "releaseEscrow",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "roles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalCompletedJobs",
     data: BytesLike
@@ -655,6 +658,8 @@ export interface Dfreelancer extends BaseContract {
     "nonpayable"
   >;
 
+  roles: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
   totalCompletedJobs: TypedContractMethod<[], [bigint], "view">;
 
   totalEmployers: TypedContractMethod<[], [bigint], "view">;
@@ -812,6 +817,9 @@ export interface Dfreelancer extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "roles"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalCompletedJobs"
   ): TypedContractMethod<[], [bigint], "view">;

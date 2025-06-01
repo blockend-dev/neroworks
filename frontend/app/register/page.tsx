@@ -115,7 +115,7 @@ export default function RegisterPage() {
   return (
     <>
       <WalletConnect onWalletConnected={handleWalletConnected} />
-      {role === 'freelancer' ? <RegisterFreelancer signer={signer} /> : <RegisterEmployer signer={signer} />}
+      {role === 'freelancer' ? <RegisterFreelancer signer={signer} aadresss={aaAddress} /> : <RegisterEmployer signer={signer} aadresss={aaAddress} />}
 
     </>
   );

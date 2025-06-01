@@ -21,7 +21,7 @@ export default function Home() {
     try {
       // Get the real signer from the wallet - don't use mock signers!
       const realSigner = await getSigner();
-
+      console.log(realSigner,'hey')
       setEoaAddress(eoaAddr);
       setAaAddress(aaAddr);
       setSigner(realSigner);

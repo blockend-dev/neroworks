@@ -26,17 +26,21 @@ contract Employers is Djob{
         /// @param _name , @param _industry
       function registerEmployer
       (string memory _name, string memory _industry,string memory _country, string memory _imageURI) public {
+          // Check role first
+        if (roles[msg.sender] != 0) revert AlreadyRegistered();
         require(employers[msg.sender].registered == false, 'AR'); // already registered
         require(bytes(_name).length > 0);
         require(bytes(_industry).length > 0);
+        
         totalEmployers++;
+        roles[msg.sender] = 1; // Set employer role
         employers[msg.sender] = Employer(msg.sender, _name, _industry, 0,_country, _imageURI,true,block.timestamp);
         emit EmployerRegistered(msg.sender, _name);
     }
 
       /// @notice hiring freelancer and check if freelancer is not already hired for the job
     /// @param jobId, @param freelancerAddress
-    function hireFreelancer(uint jobId, address freelancerAddress) public onlyEmployer(msg.sender) {
+    function hireFreelancer(uint jobId, address freelancerAddress) public onlyEmployer() {
         require(jobId <= totalJobs && jobId > 0, "JDE."); // job does not exist
         Job storage job = jobs[jobId];
         require(job.employer != address(0), "JNF"); // Job not found

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { registerEmployer } from '../../utils/aaUtils';
+import { getFreelancerByAddress, registerEmployer } from '../../utils/aaUtils';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 
@@ -13,7 +13,7 @@ interface NFTMinterProps {
   aaWalletAddress?: string;
 }
 
-const RegisterEmployer = ({ signer }: any) => {
+const RegisterEmployer = ({ signer, aaAddress }: any) => {
   const [employerName, setEmployerName] = useState('');
   const [industry, setIndustry] = useState('');
   const [country, setCountry] = useState('');
@@ -24,7 +24,7 @@ const RegisterEmployer = ({ signer }: any) => {
   // Pinata API Key and Secret
   const pinataApiKey = process.env.NEXT_PUBLIC_PINATA_KEY;
   const pinataSecretApiKey = process.env.NEXT_PUBLIC_SECRET_KEY;
-  
+
   const router = useRouter();
 
   // Handle image upload to Pinata
@@ -72,6 +72,11 @@ const RegisterEmployer = ({ signer }: any) => {
     setLoading(true);
 
     try {
+      const isFreelancer = await getFreelancerByAddress(signer, aaAddress)
+      if (isFreelancer) {
+        toast.error('You already have a freelancer account!');
+        return
+      }
       // Call the registerEmployer function from aaUtils
       await registerEmployer(signer, employerName, industry, country, imageUri);
 
@@ -83,8 +88,8 @@ const RegisterEmployer = ({ signer }: any) => {
     } catch (error) {
       toast.error('Error registering employer!');
       console.error(error);
-    } finally{
-    setLoading(false);
+    } finally {
+      setLoading(false);
 
     }
   };

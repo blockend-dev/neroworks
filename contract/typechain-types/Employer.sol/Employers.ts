@@ -103,6 +103,7 @@ export interface EmployersInterface extends Interface {
       | "hireFreelancer"
       | "owner"
       | "registerEmployer"
+      | "roles"
       | "totalCompletedJobs"
       | "totalEmployers"
       | "totalFreelancers"
@@ -167,6 +168,7 @@ export interface EmployersInterface extends Interface {
     functionFragment: "registerEmployer",
     values: [string, string, string, string]
   ): string;
+  encodeFunctionData(functionFragment: "roles", values: [AddressLike]): string;
   encodeFunctionData(
     functionFragment: "totalCompletedJobs",
     values?: undefined
@@ -218,6 +220,7 @@ export interface EmployersInterface extends Interface {
     functionFragment: "registerEmployer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "roles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalCompletedJobs",
     data: BytesLike
@@ -524,6 +527,8 @@ export interface Employers extends BaseContract {
     "nonpayable"
   >;
 
+  roles: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
   totalCompletedJobs: TypedContractMethod<[], [bigint], "view">;
 
   totalEmployers: TypedContractMethod<[], [bigint], "view">;
@@ -644,6 +649,9 @@ export interface Employers extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "roles"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalCompletedJobs"
   ): TypedContractMethod<[], [bigint], "view">;

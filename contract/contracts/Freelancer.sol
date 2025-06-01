@@ -17,10 +17,14 @@ contract Dfreelancer is Employers {
     function registerFreelancer
     (string memory _name, string memory _skills, string memory _country,
     string memory _gigTitle, string memory _gigDesc, string[] memory _images, uint256 _starting_price) public {
+         // Check role first
+        if (roles[msg.sender] != 0) revert AlreadyRegistered();
         require(freelancers[msg.sender].registered == false, 'AR'); // already registered
         require(bytes(_name).length > 0);
         require(bytes(_skills).length > 0);
         totalFreelancers++;
+         roles[msg.sender] = 2; // Set freelancer role
+        
         freelancers[msg.sender] = Freelancer(msg.sender, _name, _skills, 0,_country, 
         _gigTitle,_gigDesc,_images,0,true,block.timestamp,_starting_price);
         
@@ -60,7 +64,7 @@ contract Dfreelancer is Employers {
 
         /// @notice release escrow fund after successful completion of the job
         /// @param jobId , @param freelancerAddress
-    function releaseEscrow(uint jobId, address freelancerAddress) public onlyEmployer(msg.sender){
+    function releaseEscrow(uint jobId, address freelancerAddress) public onlyEmployer(){
         require(jobId <= totalJobs && jobId > 0, "JDE."); // job does not exist
         Job storage job = jobs[jobId];
         require(msg.sender == job.employer);
@@ -83,7 +87,7 @@ contract Dfreelancer is Employers {
 
 
     /// @notice process funds withdrawal to the freelancer after successful completion of a job
-    function withdrawEarnings() public onlyFreelancer(msg.sender) {
+    function withdrawEarnings() public onlyFreelancer() {
        Freelancer storage freelancer = freelancers[msg.sender];
         require(freelancer.balance > 0, "NBW"); // No balance to withdraw.
 

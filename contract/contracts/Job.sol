@@ -8,6 +8,7 @@ contract Djob{
     uint public totalEmployers;
     uint public totalCompletedJobs;
     address[] public allFreelancerAddresses;
+    
 
     struct Job {
         uint8 id;
@@ -56,7 +57,9 @@ contract Djob{
     mapping(address => Employer) public employers;
     // mapping(address => bool) completedByFreelancers;
     mapping(address => mapping(uint256 => uint)) escrowFunds;
-
+    mapping(address => uint8) public roles; // 0=None, 1=Employer, 2=Freelancer
+    error AlreadyRegistered();
+    error WrongRole();
 
     event JobCreated(uint jobId, string title);
     event FreelancerRegistered(address freelancerAddress, string[] name, uint256 amount);
@@ -72,20 +75,19 @@ contract Djob{
         owner = msg.sender;
     }
     
-    modifier onlyEmployer(address _employerAddress){
-        require(employers[msg.sender].employerAddress == _employerAddress, "OEF"); // only employer can call this function
+    modifier onlyEmployer() {
+            if (roles[msg.sender] != 1) revert WrongRole();
+            _;
+        }
 
-        _;
-    }
-
-     modifier onlyFreelancer(address _freelancerAddress){
-        require(freelancers[msg.sender].freelancerAddress == _freelancerAddress, "OFF"); // only freelancer can call this function
+       modifier onlyFreelancer() {
+        if (roles[msg.sender] != 2) revert WrongRole();
         _;
     }
 
      /// @notice job creation and increment job count,
     /// @param _title, @param _description, @param _budget
-    function createJob(string memory _title, string memory _description, uint256 _budget) public onlyEmployer(msg.sender){
+    function createJob(string memory _title, string memory _description, uint256 _budget) public onlyEmployer(){
         totalJobs++;
         uint8 jobId = totalJobs;
         jobs[jobId] = Job(jobId,payable(msg.sender),_title,_description,_budget,false,new address[](0),address(0));    
@@ -133,7 +135,7 @@ contract Djob{
 
     /// @notice process job completion
     /// @param jobId, @param freelancerAddress
-    function completeJob(uint jobId, address freelancerAddress) public onlyEmployer(msg.sender) {
+    function completeJob(uint jobId, address freelancerAddress) public onlyEmployer() {
         require(jobId <= totalJobs && jobId > 0, "JDE"); // job does not exist
         Job storage job = jobs[jobId];
         require(job.employer != address(0), "JNF"); // job not found

@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { ethers } from 'ethers';
-import { getSigner } from '../../utils/aaUtils';
+import { getEmployerByAddress, getSigner } from '../../utils/aaUtils';
 import { registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
 import { useRouter } from 'next/navigation';
 
 
-const RegisterFreelancer = ({ signer }: any) => {
+const RegisterFreelancer = ({ signer, aadresss  }: any) => {
   const [freelancerName, setFreelancerName] = useState('');
   const [skills, setSkills] = useState('');
   const [country, setCountry] = useState('');
@@ -77,8 +77,13 @@ const RegisterFreelancer = ({ signer }: any) => {
     try {
       // Call the registerFreelancer function from aaUtils
       const price = ethers.utils.parseEther(startingPrice.toString())
-      const test = await getSigner()
-      await registerFreelancer(test, freelancerName, skills, country,
+      const signer = await getSigner()
+      const isEmployer = await getEmployerByAddress(signer, aadresss)
+      if(isEmployer){
+         toast.error('You already have an employer account!');
+         return
+      }
+      await registerFreelancer(signer, freelancerName, skills, country, 
         gigTitle, gigDesc, [imageUri, imageUri], price);
 
       toast.success('Freelancer registered successfully!');

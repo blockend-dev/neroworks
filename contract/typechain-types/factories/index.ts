@@ -4,3 +4,4 @@
 export * as employerSol from "./Employer.sol";
 export * as freelancerSol from "./Freelancer.sol";
 export * as jobSol from "./Job.sol";
+export { RoleManager__factory } from "./RoleManager__factory";

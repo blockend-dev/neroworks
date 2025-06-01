@@ -14,6 +14,12 @@ const API_KEY = vars.get('API_KEY')
 
 module.exports = {
   solidity: "0.8.24",
+  settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200 
+      }
+    },
   typechain: {
     outDir: "typechain-types",
     target: "ethers-v6",
