@@ -13,16 +13,13 @@ import { useWallet } from '../contexts/WalletContext';
 
 export default function RegisterPage() {
   const {
-        aaAddress,
         signer,
-        isLoading
       } = useWallet();
 
   const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
     return localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
   });
   // State to track wallet connection
-  const [eoaAddress, setEoaAddress] = useState<string>('');
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 

@@ -87,7 +87,7 @@ const EmployerDashboard = () => {
         setEmployer(employerData)
         const jobsData = await getAllJobs(signer)
         // Filter jobs by employer address
-        const employerJobs = jobsData.filter((job:any) =>
+        const employerJobs = jobsData.filter((job: any) =>
           job.employer.toLowerCase() === aaAddress.toLowerCase()
         );
         setJobs(employerJobs)
@@ -97,6 +97,7 @@ const EmployerDashboard = () => {
         for (const job of jobsData) {
           balances[job.id] = await getEmployerEscrow(signer, aaAddress, job.id);
         }
+        console.log(balances)
         setEscrowBalances(balances);
       } catch (error: any) {
         toast.error(`Error loading data: ${error.message}`)
@@ -108,6 +109,19 @@ const EmployerDashboard = () => {
     fetchEmployerData()
   }, [signer, aaAddress])
 
+  useEffect(() => {
+    async function refreshData() {
+        const jobs = await getAllJobs(signer)
+        console.log(jobs)
+        const employerJobs = jobs.filter((job:any) =>
+          job.employer.toLowerCase() === aaAddress.toLowerCase());
+        setJobs(employerJobs)
+    }
+
+    refreshData()
+
+  }, [signer,jobs]);
+
   // Handle job creation
   const handleCreateJob = async () => {
     if (!newJobForm.title || !newJobForm.description || !newJobForm.budget) {
@@ -117,18 +131,17 @@ const EmployerDashboard = () => {
 
     try {
       setIsLoading(true)
-      await createJob(
+      const tx = await createJob(
         signer,
         newJobForm.title,
         newJobForm.description,
-        ethers.utils.parseEther(newJobForm.budget)
+        ethers.utils.parseEther(newJobForm.budget.toString())
       )
+      tx.transactionHash
       toast.success('Job created successfully!')
+    
       setNewJobForm({ title: '', description: '', budget: '' })
 
-      // Refresh jobs list
-      const updatedJobs = await getAllJobs(signer)
-      setJobs(updatedJobs)
     } catch (error: any) {
       toast.error(`Job creation failed: ${error.message}`)
     } finally {
@@ -224,7 +237,7 @@ const EmployerDashboard = () => {
     { month: 'Jun', hires: 8 }
   ]
 
-   // Render active jobs section
+  // Render active jobs section
   const renderActiveJobs = () => (
     <div className="space-y-4">
       {activeJobs.length > 0 ? (
@@ -289,7 +302,7 @@ const EmployerDashboard = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
-                      onClick={() => handleCompleteJob(job.id,job.hiredFreelancer)}
+                      onClick={() => handleCompleteJob(job.id, job.hiredFreelancer)}
                     >
                       <FiCheck size={14} className="inline mr-1" /> Mark Complete
                     </motion.button>
@@ -460,7 +473,7 @@ const EmployerDashboard = () => {
               className="bg-white rounded-xl shadow-sm p-6"
             >
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Active Jobs ({activeJobs.length})</h2>
-            {renderActiveJobs()}
+              {renderActiveJobs()}
             </motion.div>
           </div>
 
