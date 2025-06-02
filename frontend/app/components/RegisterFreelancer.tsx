@@ -7,9 +7,15 @@ import { ethers } from 'ethers';
 import { getEmployerByAddress, getSigner } from '../../utils/aaUtils';
 import { registerFreelancer, getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
 import { useRouter } from 'next/navigation';
+import { useWallet } from '../contexts/WalletContext';
 
 
-const RegisterFreelancer = ({ signer, aadresss  }: any) => {
+const RegisterFreelancer = () => {
+
+  const {
+    aaAddress,
+    signer,
+  } = useWallet();
   const [freelancerName, setFreelancerName] = useState('');
   const [skills, setSkills] = useState('');
   const [country, setCountry] = useState('');
@@ -51,8 +57,8 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
       setImageUri(`https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`);
       console.log(response, 'res')
       toast.success('Image uploaded successfully!');
-      
-   
+
+
     } catch (error) {
       toast.error('Error uploading image!');
     } finally {
@@ -76,16 +82,16 @@ const RegisterFreelancer = ({ signer, aadresss  }: any) => {
       // Call the registerFreelancer function from aaUtils
       const price = ethers.utils.parseEther(startingPrice.toString())
       const signer = await getSigner()
-      const isEmployer = await getEmployerByAddress(signer, aadresss)
-      if(isEmployer.employerAddress.toString() !== '0x0000000000000000000000000000000000000000'){
-         toast.error('You already have an employer account!');
-         return
+      const isEmployer = await getEmployerByAddress(signer, aaAddress)
+      if (isEmployer.employerAddress.toString() !== '0x0000000000000000000000000000000000000000') {
+        toast.error('You already have an employer account!');
+        return
       }
-      await registerFreelancer(signer, freelancerName, skills, country, 
+      await registerFreelancer(signer, freelancerName, skills, country,
         gigTitle, gigDesc, [imageUri, imageUri], price);
 
       toast.success('Freelancer registered successfully!');
-         setTimeout(() => {
+      setTimeout(() => {
         router.push('/freelancer-dashboard');
       }, 3000);
     } catch (error) {

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import RegisterFreelancer from '@/app/components/RegisterFreelancer';
 import RegisterEmployer from '@/app/components/RegisterEmployer';
 import { toast } from 'react-toastify';
-import WalletConnect from '@/app/components/WalletConnect';
 import { ethers } from 'ethers';
 import { getSigner } from '@/utils/aaUtils';
 import { getSupportedTokens, initAAClient, initAABuilder } from '../../utils/aaUtils';
@@ -104,7 +103,7 @@ export default function RegisterPage() {
   );
   return (
     <>
-      {role === 'freelancer' ? <RegisterFreelancer signer={signer} aadresss={aaAddress} /> : <RegisterEmployer signer={signer} aadresss={aaAddress} />}
+      {role === 'freelancer' ? <RegisterFreelancer /> : <RegisterEmployer />}
 
     </>
   );

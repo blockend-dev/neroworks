@@ -1,191 +1,321 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { getFreelancerByAddress, registerEmployer } from '../../utils/aaUtils';
-import { ethers } from 'ethers';
-import { useRouter } from 'next/navigation';
+'use client'
+import { motion } from 'framer-motion'
+import { useState, useEffect, AnyActionArg } from 'react'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import { ethers } from 'ethers'
+import { useRouter } from 'next/navigation'
+import { FiUpload, FiBriefcase, FiGlobe, FiUser, FiCheckCircle } from 'react-icons/fi'
+import { FaIndustry } from 'react-icons/fa'
+import { getFreelancerByAddress, registerEmployer } from '@/utils/aaUtils'
+import { useWallet } from '../contexts/WalletContext'
 
 
-interface NFTMinterProps {
-  signer?: ethers.Signer;
-  aaWalletAddress?: string;
-}
+const RegisterEmployer = () => {
 
-const RegisterEmployer = ({ signer, aaAddress }: any) => {
-  const [employerName, setEmployerName] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [country, setCountry] = useState('');
-  const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [imageUri, setImageUri] = useState<string>('');
+  const {
+      aaAddress,
+      signer,
+    } = useWallet();
 
-  // Pinata API Key and Secret
-  const pinataApiKey = process.env.NEXT_PUBLIC_PINATA_KEY;
-  const pinataSecretApiKey = process.env.NEXT_PUBLIC_SECRET_KEY;
 
-  const router = useRouter();
+  const [formData, setFormData] = useState({
+    employerName: '',
+    industry: '',
+    country: '',
+    image: null as File | null
+  })
+  const [imageUri, setImageUri] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const router = useRouter()
 
-  // Handle image upload to Pinata
-  const handleImageUpload = async (file: File) => {
-    setLoading(true);
-    const formData = new FormData();
-    formData.append('file', file);
+const handleImageUpload = async (file: File) => {
+  setLoading(true);
+  setUploadProgress(0);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    try {
-      const response = await axios.post(
-        'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        formData,
-        {
-          headers: {
-            'pinata_api_key': pinataApiKey,
-            'pinata_secret_api_key': pinataSecretApiKey,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      setImageUri(`https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`);
-      toast.success('Image uploaded successfully!');
-    } catch (error) {
-      toast.error('Error uploading image!');
-    } finally {
-      setLoading(false);
+  // Add optional metadata
+  formData.append('pinataMetadata', JSON.stringify({
+    name: file.name,
+    keyvalues: {
+      uploadedBy: 'neroworks-employer-registration',
+      timestamp: new Date().toISOString()
     }
-  };
+  }));
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('user_role');
-
-    if (!signer) {
-      toast.error('Invalid signer!');
-      return;
-    }
-
-    if (!employerName || !industry || !country || !image) {
-      toast.error('All fields are required!');
-      return;
-    }
-    setLoading(true);
-
-    try {
-      const isFreelancer = await getFreelancerByAddress(signer, aaAddress)
-      if (isFreelancer) {
-        toast.error('You already have a freelancer account!');
-        return
+  try {
+    const response = await axios.post(
+      'https://api.pinata.cloud/pinning/pinFileToIPFS',
+      formData,
+      {
+        headers: {
+          'pinata_api_key': process.env.NEXT_PUBLIC_PINATA_KEY,
+          'pinata_secret_api_key': process.env.NEXT_PUBLIC_SECRET_KEY,
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          }
+        },
+        maxBodyLength: Infinity, // Needed for larger files
+        maxContentLength: Infinity,
       }
-      // Call the registerEmployer function from aaUtils
-      await registerEmployer(signer, employerName, industry, country, imageUri);
+    );
 
-      toast.success('Employer registered successfully!');
-
-      setTimeout(() => {
-        router.push('/employer-dashboard');
-      }, 3000);
-    } catch (error) {
-      toast.error('Error registering employer!');
-      console.error(error);
-    } finally {
-      setLoading(false);
-
+    if (response.data.IpfsHash) {
+      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
+      setImageUri(ipfsUrl);
+      toast.success('Image uploaded to IPFS successfully!');
+      return ipfsUrl;
+    } else {
+      throw new Error('Invalid response from Pinata');
     }
-  };
+  } catch (error) {
+    console.error('IPFS upload error:', error);
+    
+    let errorMessage = 'Failed to upload image to IPFS';
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.error || 
+                    error.message || 
+                    'Network error during upload';
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
 
-  return (
-    <motion.div
-      className="w-full max-w-md mx-auto mt-12 p-6 bg-white rounded-xl shadow-lg"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <h2 className="text-3xl font-bold text-center mb-6">Register as Employer</h2>
-
-      <form onSubmit={handleSubmit}>
-        {/* Employer Name */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="employerName">
-            Employer Name
-          </label>
-          <input
-            type="text"
-            id="employerName"
-            className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={employerName}
-            onChange={(e) => setEmployerName(e.target.value)}
-            placeholder="Enter your company name"
-          />
-        </div>
-
-        {/* Industry */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="industry">
-            Industry
-          </label>
-          <input
-            type="text"
-            id="industry"
-            className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            placeholder="Enter the industry"
-          />
-        </div>
-
-        {/* Country */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="country">
-            Country
-          </label>
-          <input
-            type="text"
-            id="country"
-            className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            placeholder="Enter your country"
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="image">
-            Company Logo / Image
-          </label>
-          <input
-            type="file"
-            id="image"
-            className="w-full px-4 py-2 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => {
-              if (e.target.files) {
-                setImage(e.target.files[0]);
-                handleImageUpload(e.target.files[0]);
-              }
-            }}
-          />
-          {loading && <p className="text-blue-500 mt-2">Uploading...</p>}
-          {imageUri && (
-            <p className="text-green-500 mt-2">Image uploaded: <a href={imageUri} target="_blank" rel="noopener noreferrer">{imageUri}</a></p>
-          )}
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition 
-      ${loading ? 'bg-blue-400 cursor-not-allowed' : 'hover:bg-blue-700'}`}
-          >
-            {loading ? 'Registering...' : 'Register Employer'}
-          </button>
-        </div>
-
-      </form>
-    </motion.div>
-  );
+    toast.error(errorMessage);
+    throw error; // Re-throw for handling in calling function
+  } finally {
+    setLoading(false);
+  }
 };
 
-export default RegisterEmployer;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    localStorage.removeItem('user_role')
+    console.log(signer,aaAddress)
+    if (!signer || !aaAddress) {
+      toast.error('Please connect your wallet first!')
+      return
+    }
+
+    if (!formData.employerName || !formData.industry || !formData.country || !imageUri) {
+      toast.error('All fields are required!')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const isFreelancer = await getFreelancerByAddress(signer, aaAddress)
+      if (isFreelancer?.registered) {
+        toast.error('You already have a freelancer account!')
+        return
+      }
+      await registerEmployer(signer, formData.employerName, formData.industry, formData.country, imageUri)
+      toast.success('Employer registered successfully!')
+
+      setTimeout(() => {
+        router.push('/employer-dashboard')
+      }, 2000)
+    } catch (error) {
+      toast.error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-2xl mx-auto"
+      >
+        <div className="text-center mb-12">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center justify-center bg-indigo-100 p-4 rounded-full mb-6"
+          >
+            <FiBriefcase className="text-indigo-600 text-3xl" />
+          </motion.div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Register Your <span className="text-indigo-600">Company</span>
+          </h1>
+          <p className="text-lg text-gray-600">
+            Join our network of employers and find top talent for your projects
+          </p>
+        </div>
+
+        <motion.div
+          whileHover={{ y: -5 }}
+          className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100"
+        >
+          <div className="p-8">
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-6">
+                {/* Employer Name */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <FiUser className="text-indigo-500" />
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    value={formData.employerName}
+                    onChange={(e) => setFormData({...formData, employerName: e.target.value})}
+                    placeholder="Acme Inc."
+                    required
+                  />
+                </div>
+
+                {/* Industry */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <FaIndustry className="text-indigo-500" />
+                    Industry
+                  </label>
+                  <select
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    value={formData.industry}
+                    onChange={(e) => setFormData({...formData, industry: e.target.value})}
+                    required
+                  >
+                    <option value="">Select your industry</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Education">Education</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                {/* Country */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <FiGlobe className="text-indigo-500" />
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    value={formData.country}
+                    onChange={(e) => setFormData({...formData, country: e.target.value})}
+                    placeholder="United States"
+                    required
+                  />
+                </div>
+
+                {/* Image Upload */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <FiUpload className="text-indigo-500" />
+                    Company Logo
+                  </label>
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {formData.image ? (
+                          <>
+                            <FiCheckCircle className="w-8 h-8 text-green-500 mb-2" />
+                            <p className="text-sm text-gray-500">{formData.image.name}</p>
+                          </>
+                        ) : (
+                          <>
+                            <FiUpload className="w-8 h-8 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-500">
+                              <span className="font-semibold">Click to upload</span> or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-400">PNG, JPG up to 5MB</p>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        id="dropzone-file"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0]
+                            setFormData({...formData, image: file})
+                            handleImageUpload(file)
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {loading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className="bg-indigo-600 h-2.5 rounded-full"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                  {imageUri && !loading && (
+                    <p className="text-xs text-green-600 mt-1 truncate">
+                      Uploaded: {imageUri}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full py-3 px-4 bg-indigo-600 text-white font-medium rounded-lg transition 
+                    ${loading ? 'bg-indigo-400 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Registering...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <FiBriefcase />
+                      Complete Registration
+                    </span>
+                  )}
+                </motion.button>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+        >
+          {[
+            { icon: <FiBriefcase className="w-6 h-6" />, text: 'Post Unlimited Jobs' },
+            { icon: <FiUser className="w-6 h-6" />, text: 'Access Top Talent' },
+            { icon: <FiCheckCircle className="w-6 h-6" />, text: 'Verified Freelancers' },
+            { icon: <FiGlobe className="w-6 h-6" />, text: 'Global Reach' }
+          ].map((item, index) => (
+            <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+              <div className="text-indigo-600 mx-auto mb-2">{item.icon}</div>
+              <p className="text-sm font-medium text-gray-700">{item.text}</p>
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </div>
+  )
+}
+
+export default RegisterEmployer

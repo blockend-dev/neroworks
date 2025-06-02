@@ -33,7 +33,7 @@ const Navbar = () => {
             <Link href="/post-job" className="hover:text-indigo-600">Post a Job</Link>
           </>
         ) : null}
-        <button
+        {/* <button
           onClick={() => {
             localStorage.clear();
             router.push('/');
@@ -41,7 +41,7 @@ const Navbar = () => {
           className="bg-indigo-600 text-white px-4 py-2 rounded"
         >
           Logout
-        </button>
+        </button> */}
       </div>
     </nav>
   );
