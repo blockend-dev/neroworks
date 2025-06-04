@@ -111,8 +111,9 @@ const EmployerDashboard = () => {
 
   useEffect(() => {
     async function refreshData() {
+       const employerData = await getEmployerByAddress(signer, aaAddress)
+        setEmployer(employerData)
         const jobs = await getAllJobs(signer)
-        console.log(jobs)
         const employerJobs = jobs.filter((job:any) =>
           job.employer.toLowerCase() === aaAddress.toLowerCase());
         setJobs(employerJobs)

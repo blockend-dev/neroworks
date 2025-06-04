@@ -60,6 +60,19 @@ export default function FreelancerDashboard() {
       }
     })();
   }, [signer, aaAddress]);
+
+  useEffect(() => {
+    async function refreshData() {
+      const freelancerData = await getFreelancerByAddress(signer, aaAddress)
+      setFreelancer(freelancerData)
+      const allJobs = await getAllJobs(signer);
+      setJobs(allJobs);
+    }
+
+    refreshData()
+
+  }, [signer, jobs]);
+
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
     const loadTokens = async () => {
@@ -219,7 +232,7 @@ export default function FreelancerDashboard() {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gradient-to-br from-indigo-50 to-white text-gray-800'}`}>
       <BackgroundElements />
-      {isLoading || loading? (
+      {isLoading || loading ? (
         // Show loading indicator
         <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
           <div className="text-center">
