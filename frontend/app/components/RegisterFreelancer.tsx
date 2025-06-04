@@ -73,8 +73,8 @@ const RegisterFreelancer = () => {
       return
     }
 
-    if (!formData.freelancerName || !formData.skills || !formData.country || 
-        !formData.gigTitle || !formData.gigDesc || !formData.startingPrice || !formData.image) {
+    if (!formData.freelancerName || !formData.skills || !formData.country ||
+      !formData.gigTitle || !formData.gigDesc || !formData.startingPrice || !formData.image) {
       toast.error('All fields are required!')
       return
     }
@@ -93,22 +93,25 @@ const RegisterFreelancer = () => {
       const price = ethers.utils.parseEther(formData.startingPrice)
 
       // Register freelancer
-      await registerFreelancer(
-        signer, 
-        formData.freelancerName, 
-        formData.skills, 
+      const tx = await registerFreelancer(
+        signer,
+        formData.freelancerName,
+        formData.skills,
         formData.country,
-        formData.gigTitle, 
-        formData.gigDesc, 
+        formData.gigTitle,
+        formData.gigDesc,
         [imageUri, imageUri], // Using same image for profile and gig
         price
       )
 
-      toast.success('Freelancer registered successfully!')
-      
-      setTimeout(() => {
-        router.push('/freelancer-dashboard')
-      }, 2000)
+      if (tx.transactionHash) {
+        toast.success('Freelancer registered successfully!')
+
+        setTimeout(() => {
+          router.push('/freelancer-dashboard')
+        }, 3000)
+      }
+
     } catch (error) {
       console.error('Registration error:', error)
       toast.error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -157,7 +160,7 @@ const RegisterFreelancer = () => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.freelancerName}
-                    onChange={(e) => setFormData({...formData, freelancerName: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, freelancerName: e.target.value })}
                     placeholder="John Doe"
                     required
                   />
@@ -173,7 +176,7 @@ const RegisterFreelancer = () => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.skills}
-                    onChange={(e) => setFormData({...formData, skills: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
                     placeholder="Web Development, UI/UX, Smart Contracts"
                     required
                   />
@@ -189,7 +192,7 @@ const RegisterFreelancer = () => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.country}
-                    onChange={(e) => setFormData({...formData, country: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                     placeholder="United States"
                     required
                   />
@@ -205,7 +208,7 @@ const RegisterFreelancer = () => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.gigTitle}
-                    onChange={(e) => setFormData({...formData, gigTitle: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, gigTitle: e.target.value })}
                     placeholder="Senior Web3 Developer"
                     required
                   />
@@ -223,7 +226,7 @@ const RegisterFreelancer = () => {
                     min="0.01"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.startingPrice}
-                    onChange={(e) => setFormData({...formData, startingPrice: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, startingPrice: e.target.value })}
                     placeholder="0.1"
                     required
                   />
@@ -238,7 +241,7 @@ const RegisterFreelancer = () => {
                   <textarea
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.gigDesc}
-                    onChange={(e) => setFormData({...formData, gigDesc: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, gigDesc: e.target.value })}
                     placeholder="Describe your services, experience, and expertise..."
                     rows={4}
                     required
@@ -276,7 +279,7 @@ const RegisterFreelancer = () => {
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             const file = e.target.files[0]
-                            setFormData({...formData, image: file})
+                            setFormData({ ...formData, image: file })
                             handleImageUpload(file)
                           }
                         }}

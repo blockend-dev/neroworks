@@ -14,9 +14,9 @@ import { useWallet } from '../contexts/WalletContext'
 const RegisterEmployer = () => {
 
   const {
-      aaAddress,
-      signer,
-    } = useWallet();
+    aaAddress,
+    signer,
+  } = useWallet();
 
 
   const [formData, setFormData] = useState({
@@ -30,75 +30,75 @@ const RegisterEmployer = () => {
   const [uploadProgress, setUploadProgress] = useState(0)
   const router = useRouter()
 
-const handleImageUpload = async (file: File) => {
-  setLoading(true);
-  setUploadProgress(0);
-  const formData = new FormData();
-  formData.append('file', file);
+  const handleImageUpload = async (file: File) => {
+    setLoading(true);
+    setUploadProgress(0);
+    const formData = new FormData();
+    formData.append('file', file);
 
-  // Add optional metadata
-  formData.append('pinataMetadata', JSON.stringify({
-    name: file.name,
-    keyvalues: {
-      uploadedBy: 'neroworks-employer-registration',
-      timestamp: new Date().toISOString()
-    }
-  }));
-
-  try {
-    const response = await axios.post(
-      'https://api.pinata.cloud/pinning/pinFileToIPFS',
-      formData,
-      {
-        headers: {
-          'pinata_api_key': process.env.NEXT_PUBLIC_PINATA_KEY,
-          'pinata_secret_api_key': process.env.NEXT_PUBLIC_SECRET_KEY,
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percentCompleted);
-          }
-        },
-        maxBodyLength: Infinity, // Needed for larger files
-        maxContentLength: Infinity,
+    // Add optional metadata
+    formData.append('pinataMetadata', JSON.stringify({
+      name: file.name,
+      keyvalues: {
+        uploadedBy: 'neroworks-employer-registration',
+        timestamp: new Date().toISOString()
       }
-    );
+    }));
 
-    if (response.data.IpfsHash) {
-      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-      setImageUri(ipfsUrl);
-      toast.success('Image uploaded to IPFS successfully!');
-      return ipfsUrl;
-    } else {
-      throw new Error('Invalid response from Pinata');
-    }
-  } catch (error) {
-    console.error('IPFS upload error:', error);
-    
-    let errorMessage = 'Failed to upload image to IPFS';
-    if (axios.isAxiosError(error)) {
-      errorMessage = error.response?.data?.error || 
-                    error.message || 
-                    'Network error during upload';
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    }
+    try {
+      const response = await axios.post(
+        'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        formData,
+        {
+          headers: {
+            'pinata_api_key': process.env.NEXT_PUBLIC_PINATA_KEY,
+            'pinata_secret_api_key': process.env.NEXT_PUBLIC_SECRET_KEY,
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(percentCompleted);
+            }
+          },
+          maxBodyLength: Infinity, // Needed for larger files
+          maxContentLength: Infinity,
+        }
+      );
 
-    toast.error(errorMessage);
-    throw error; // Re-throw for handling in calling function
-  } finally {
-    setLoading(false);
-  }
-};
+      if (response.data.IpfsHash) {
+        const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
+        setImageUri(ipfsUrl);
+        toast.success('Image uploaded to IPFS successfully!');
+        return ipfsUrl;
+      } else {
+        throw new Error('Invalid response from Pinata');
+      }
+    } catch (error) {
+      console.error('IPFS upload error:', error);
+
+      let errorMessage = 'Failed to upload image to IPFS';
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.error ||
+          error.message ||
+          'Network error during upload';
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
+      throw error; // Re-throw for handling in calling function
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     localStorage.removeItem('user_role')
-    console.log(signer,aaAddress)
+    console.log(signer, aaAddress)
     if (!signer || !aaAddress) {
       toast.error('Please connect your wallet first!')
       return
@@ -116,12 +116,15 @@ const handleImageUpload = async (file: File) => {
         toast.error('You already have a freelancer account!')
         return
       }
-      await registerEmployer(signer, formData.employerName, formData.industry, formData.country, imageUri)
-      toast.success('Employer registered successfully!')
+      const tx = await registerEmployer(signer, formData.employerName, formData.industry, formData.country, imageUri)
+      if (tx.transactionHash) {
+        toast.success('Employer registered successfully!')
 
-      setTimeout(() => {
-        router.push('/employer-dashboard')
-      }, 2000)
+        setTimeout(() => {
+          router.push('/employer-dashboard')
+        }, 3000)
+      }
+
     } catch (error) {
       toast.error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
@@ -169,7 +172,7 @@ const handleImageUpload = async (file: File) => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.employerName}
-                    onChange={(e) => setFormData({...formData, employerName: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, employerName: e.target.value })}
                     placeholder="Acme Inc."
                     required
                   />
@@ -184,7 +187,7 @@ const handleImageUpload = async (file: File) => {
                   <select
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.industry}
-                    onChange={(e) => setFormData({...formData, industry: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                     required
                   >
                     <option value="">Select your industry</option>
@@ -206,7 +209,7 @@ const handleImageUpload = async (file: File) => {
                     type="text"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     value={formData.country}
-                    onChange={(e) => setFormData({...formData, country: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                     placeholder="United States"
                     required
                   />
@@ -244,7 +247,7 @@ const handleImageUpload = async (file: File) => {
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             const file = e.target.files[0]
-                            setFormData({...formData, image: file})
+                            setFormData({ ...formData, image: file })
                             handleImageUpload(file)
                           }
                         }}
