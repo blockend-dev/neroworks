@@ -16,14 +16,19 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+   useEffect(() => {
+    const storedRole = localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
+    setRole(storedRole);
+  }, []);
+  
   // Check user role from blockchain
   useEffect(() => {
     const checkRole = async () => {
-      // if (!signer || !aaAddress) {
-      //   setRole(null)
-      //   setLoading(false)
-      //   return
-      // }
+      if (!signer || !aaAddress) {
+        setRole(null)
+        setLoading(false)
+        return
+      }
 
       try {
         // Check if freelancer
