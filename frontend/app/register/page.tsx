@@ -16,13 +16,15 @@ export default function RegisterPage() {
         signer,
       } = useWallet();
 
-  const [role, setRole] = useState<'freelancer' | 'employer' | null>(() => {
-    return localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
-  });
+  const [role, setRole] = useState<'freelancer' | 'employer' | null>(null);
   // State to track wallet connection
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
+    useEffect(() => {
+    const storedRole = localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
+    setRole(storedRole);
+  }, []);
 
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
