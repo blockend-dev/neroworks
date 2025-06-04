@@ -340,7 +340,7 @@ export default function FreelancerDashboard() {
             <StatCard
               icon={<FiDollarSign className="text-indigo-500" size={24} />}
               label="Available Balance"
-              value={`Ξ ${ethers.utils.formatEther(freelancer.balance || '0')}`}
+              value={`$ ${ethers.utils.formatEther(freelancer.balance || '0')}`}
               change="+2.4%"
               darkMode={darkMode}
             />
@@ -361,7 +361,7 @@ export default function FreelancerDashboard() {
             <StatCard
               icon={<FiTrendingUp className="text-blue-500" size={24} />}
               label="Starting Price"
-              value={`Ξ ${ethers.utils.formatEther(freelancer.starting_price || '0')}`}
+              value={`$ ${ethers.utils.formatEther(freelancer.starting_price || '0')}`}
               change="+5% from last month"
               darkMode={darkMode}
             />

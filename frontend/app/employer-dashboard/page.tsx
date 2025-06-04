@@ -258,7 +258,7 @@ const EmployerDashboard = () => {
                   </p>
                   <p className="text-sm font-medium">
                     Escrow: <span className="text-green-600">
-                      Ξ {escrowBalances[job.id] ? ethers.utils.formatEther(escrowBalances[job.id]) : '0'}
+                      USDC {escrowBalances[job.id] ? ethers.utils.formatEther(escrowBalances[job.id]) : '0'}
                     </span>
                   </p>
                 </div>

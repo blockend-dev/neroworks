@@ -19,11 +19,11 @@ const Navbar = () => {
   // Check user role from blockchain
   useEffect(() => {
     const checkRole = async () => {
-      if (!signer || !aaAddress) {
-        setRole(null)
-        setLoading(false)
-        return
-      }
+      // if (!signer || !aaAddress) {
+      //   setRole(null)
+      //   setLoading(false)
+      //   return
+      // }
 
       try {
         // Check if freelancer
@@ -53,7 +53,7 @@ const Navbar = () => {
     }
 
     checkRole()
-  }, [signer, aaAddress, pathname])
+  }, [signer, pathname])
 
   // Don't show Navbar on these pages
   if (pathname === '/' || pathname === '/register') return null
