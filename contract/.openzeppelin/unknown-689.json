@@ -1,0 +1,391 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x9035c6429cc823B118b3EBC55c10280bbbe3B12C",
+      "txHash": "0x636ad21092e09ab52c133db7277265669ae3235b6d14c150fc23e3a40ed5a049",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "b8f98fb30821bd035853c40b42aa77c91fe250dee5af36d06dc982b13f52144d": {
+      "address": "0x40e5b063862c5701041F8285065B263e6f348bae",
+      "txHash": "0x197c8454125b61b2a463764c90bed89f1d176a3462900693169ccc2c98bae9b8",
+      "layout": {
+        "solcVersion": "0.8.24",
+        "storage": [
+          {
+            "label": "owner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:5"
+          },
+          {
+            "label": "totalJobs",
+            "offset": 20,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:6"
+          },
+          {
+            "label": "totalFreelancers",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:7"
+          },
+          {
+            "label": "totalEmployers",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:8"
+          },
+          {
+            "label": "totalCompletedJobs",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:9"
+          },
+          {
+            "label": "jobs",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_uint256,t_struct(Job)1284_storage)",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:48"
+          },
+          {
+            "label": "freelancers",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_struct(Freelancer)1311_storage)",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:49"
+          },
+          {
+            "label": "employers",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_address,t_struct(Employer)1328_storage)",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:50"
+          },
+          {
+            "label": "escrowFunds",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:51"
+          },
+          {
+            "label": "roles",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_mapping(t_address,t_uint8)",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:52"
+          },
+          {
+            "label": "allFreelancerAddresses",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Storage",
+            "src": "contracts/Storage.sol:53"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)7_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_string_storage)2_storage": {
+            "label": "string[2]",
+            "numberOfBytes": "64"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Employer)1328_storage)": {
+            "label": "mapping(address => struct Storage.Employer)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Freelancer)1311_storage)": {
+            "label": "mapping(address => struct Storage.Freelancer)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint8)": {
+            "label": "mapping(address => uint8)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Job)1284_storage)": {
+            "label": "mapping(uint256 => struct Storage.Job)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Employer)1328_storage": {
+            "label": "struct Storage.Employer",
+            "members": [
+              {
+                "label": "employerAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "industry",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "balance",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "country",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "image",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "registered",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "registration_date",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              }
+            ],
+            "numberOfBytes": "256"
+          },
+          "t_struct(Freelancer)1311_storage": {
+            "label": "struct Storage.Freelancer",
+            "members": [
+              {
+                "label": "freelancerAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "skills",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "balance",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "country",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "gigTitle",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "gitDescription",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "images",
+                "type": "t_array(t_string_storage)2_storage",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "jobsCompleted",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "9"
+              },
+              {
+                "label": "registered",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "10"
+              },
+              {
+                "label": "registration_date",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "11"
+              },
+              {
+                "label": "starting_price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "12"
+              }
+            ],
+            "numberOfBytes": "416"
+          },
+          "t_struct(Job)1284_storage": {
+            "label": "struct Storage.Job",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "employer",
+                "type": "t_address",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "title",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "description",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "budget",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "completed",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "applicants",
+                "type": "t_array(t_address)dyn_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "hiredFreelancer",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

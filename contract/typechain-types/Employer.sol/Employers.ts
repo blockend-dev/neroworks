@@ -95,6 +95,7 @@ export interface EmployersInterface extends Interface {
       | "applyForJob"
       | "completeJob"
       | "createJob"
+      | "editEmployerProfile"
       | "employers"
       | "freelancers"
       | "getEmployerByAddress"
@@ -138,6 +139,10 @@ export interface EmployersInterface extends Interface {
   encodeFunctionData(
     functionFragment: "createJob",
     values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "editEmployerProfile",
+    values: [string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "employers",
@@ -197,6 +202,10 @@ export interface EmployersInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "createJob", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "editEmployerProfile",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "employers", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "freelancers",
@@ -446,6 +455,12 @@ export interface Employers extends BaseContract {
     "nonpayable"
   >;
 
+  editEmployerProfile: TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
+
   employers: TypedContractMethod<
     [arg0: AddressLike],
     [
@@ -561,6 +576,13 @@ export interface Employers extends BaseContract {
     nameOrSignature: "createJob"
   ): TypedContractMethod<
     [_title: string, _description: string, _budget: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "editEmployerProfile"
+  ): TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
     [void],
     "nonpayable"
   >;

@@ -14,80 +14,134 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Employers",
+      name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Employers__factory>;
+    ): Promise<Contracts.Initializable__factory>;
     getContractFactory(
       name: "Dfreelancer",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Dfreelancer__factory>;
     getContractFactory(
-      name: "Djob",
+      name: "EmployerLogic",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Djob__factory>;
+    ): Promise<Contracts.EmployerLogic__factory>;
     getContractFactory(
-      name: "RoleManager",
+      name: "FreelancerLogic",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RoleManager__factory>;
+    ): Promise<Contracts.FreelancerLogic__factory>;
+    getContractFactory(
+      name: "JobLogic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.JobLogic__factory>;
+    getContractFactory(
+      name: "Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Proxy__factory>;
+    getContractFactory(
+      name: "Storage",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Storage__factory>;
 
     getContractAt(
-      name: "Employers",
+      name: "Initializable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Employers>;
+    ): Promise<Contracts.Initializable>;
     getContractAt(
       name: "Dfreelancer",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Dfreelancer>;
     getContractAt(
-      name: "Djob",
+      name: "EmployerLogic",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Djob>;
+    ): Promise<Contracts.EmployerLogic>;
     getContractAt(
-      name: "RoleManager",
+      name: "FreelancerLogic",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.RoleManager>;
+    ): Promise<Contracts.FreelancerLogic>;
+    getContractAt(
+      name: "JobLogic",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.JobLogic>;
+    getContractAt(
+      name: "Proxy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Proxy>;
+    getContractAt(
+      name: "Storage",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Storage>;
 
     deployContract(
-      name: "Employers",
+      name: "Initializable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Employers>;
+    ): Promise<Contracts.Initializable>;
     deployContract(
       name: "Dfreelancer",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Dfreelancer>;
     deployContract(
-      name: "Djob",
+      name: "EmployerLogic",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Djob>;
+    ): Promise<Contracts.EmployerLogic>;
     deployContract(
-      name: "RoleManager",
+      name: "FreelancerLogic",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RoleManager>;
+    ): Promise<Contracts.FreelancerLogic>;
+    deployContract(
+      name: "JobLogic",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.JobLogic>;
+    deployContract(
+      name: "Proxy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Proxy>;
+    deployContract(
+      name: "Storage",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Storage>;
 
     deployContract(
-      name: "Employers",
+      name: "Initializable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Employers>;
+    ): Promise<Contracts.Initializable>;
     deployContract(
       name: "Dfreelancer",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Dfreelancer>;
     deployContract(
-      name: "Djob",
+      name: "EmployerLogic",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Djob>;
+    ): Promise<Contracts.EmployerLogic>;
     deployContract(
-      name: "RoleManager",
+      name: "FreelancerLogic",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RoleManager>;
+    ): Promise<Contracts.FreelancerLogic>;
+    deployContract(
+      name: "JobLogic",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.JobLogic>;
+    deployContract(
+      name: "Proxy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Proxy>;
+    deployContract(
+      name: "Storage",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Storage>;
 
     // default types
     getContractFactory(

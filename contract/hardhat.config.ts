@@ -5,6 +5,8 @@ require('solidity-coverage')
 require('hardhat-deploy')
 require('dotenv').config()
 const { vars } = require("hardhat/config");
+import '@openzeppelin/hardhat-upgrades';
+
 
 
 

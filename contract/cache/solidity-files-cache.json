@@ -1,55 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/workspaces/neroworks/contract/contracts/Employer.sol": {
-      "lastModificationDate": 1748685968557,
-      "contentHash": "2978c175e1f86818f8dceea9addc6d87",
-      "sourceName": "contracts/Employer.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          }
-        }
-      },
-      "imports": [
-        "./Job.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Employers"
-      ]
-    },
-    "/workspaces/neroworks/contract/contracts/Job.sol": {
-      "lastModificationDate": 1748686028207,
-      "contentHash": "c2817e269114397d332fe663b67aea40",
-      "sourceName": "contracts/Job.sol",
+    "/workspaces/neroworks/contract/contracts/Storage.sol": {
+      "lastModificationDate": 1750094292486,
+      "contentHash": "2ec0702a627b2ff5cf28337c3428a6d1",
+      "sourceName": "contracts/Storage.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -86,13 +41,13 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Djob"
+        "Storage"
       ]
     },
-    "/workspaces/neroworks/contract/contracts/Freelancer.sol": {
-      "lastModificationDate": 1748685986756,
-      "contentHash": "bccaaa5a4330f766a28f9a476cf7c826",
-      "sourceName": "contracts/Freelancer.sol",
+    "/workspaces/neroworks/contract/contracts/Proxy.sol": {
+      "lastModificationDate": 1750044339832,
+      "contentHash": "578d868b2fd49450ee272c6d06f7255d",
+      "sourceName": "contracts/Proxy.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -125,13 +80,239 @@
         }
       },
       "imports": [
-        "./Employer.sol"
+        "./Storage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Proxy"
+      ]
+    },
+    "/workspaces/neroworks/contract/contracts/EmployerLogic.sol": {
+      "lastModificationDate": 1750092862163,
+      "contentHash": "de507549e5cba92c689c2733153b3ee1",
+      "sourceName": "contracts/EmployerLogic.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./Storage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "EmployerLogic"
+      ]
+    },
+    "/workspaces/neroworks/contract/contracts/JobLogic.sol": {
+      "lastModificationDate": 1750043642916,
+      "contentHash": "c0d72609c056e76e90093680b8bec03c",
+      "sourceName": "contracts/JobLogic.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./Storage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "JobLogic"
+      ]
+    },
+    "/workspaces/neroworks/contract/contracts/FreelancerLogic.sol": {
+      "lastModificationDate": 1750095320652,
+      "contentHash": "0acd4412bd9ea9c93106833866bac37a",
+      "sourceName": "contracts/FreelancerLogic.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./Storage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "FreelancerLogic"
+      ]
+    },
+    "/workspaces/neroworks/contract/contracts/Dfreelancer.sol": {
+      "lastModificationDate": 1750045195945,
+      "contentHash": "1cb0e4530dd201c81e01d3b2659107d2",
+      "sourceName": "contracts/Dfreelancer.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./EmployerLogic.sol",
+        "./FreelancerLogic.sol",
+        "./JobLogic.sol",
+        "@openzeppelin/contracts/proxy/utils/Initializable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
         "Dfreelancer"
+      ]
+    },
+    "/workspaces/neroworks/contract/node_modules/@openzeppelin/contracts/proxy/utils/Initializable.sol": {
+      "lastModificationDate": 1750075682829,
+      "contentHash": "2acae54ad209714bca07edf4bae32f72",
+      "sourceName": "@openzeppelin/contracts/proxy/utils/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Initializable"
       ]
     }
   }

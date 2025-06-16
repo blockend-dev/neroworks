@@ -54,6 +54,37 @@ export declare namespace Djob {
     applicants: string[];
     hiredFreelancer: string;
   };
+
+  export type EmployerStruct = {
+    employerAddress: AddressLike;
+    name: string;
+    industry: string;
+    balance: BigNumberish;
+    country: string;
+    image: string;
+    registered: boolean;
+    registration_date: BigNumberish;
+  };
+
+  export type EmployerStructOutput = [
+    employerAddress: string,
+    name: string,
+    industry: string,
+    balance: bigint,
+    country: string,
+    image: string,
+    registered: boolean,
+    registration_date: bigint
+  ] & {
+    employerAddress: string;
+    name: string;
+    industry: string;
+    balance: bigint;
+    country: string;
+    image: string;
+    registered: boolean;
+    registration_date: bigint;
+  };
 }
 
 export interface DjobInterface extends Interface {
@@ -64,10 +95,15 @@ export interface DjobInterface extends Interface {
       | "applyForJob"
       | "completeJob"
       | "createJob"
+      | "editEmployerProfile"
       | "employers"
       | "freelancers"
+      | "getEmployerByAddress"
+      | "getEmployerEscrow"
       | "getJobByID"
+      | "hireFreelancer"
       | "owner"
+      | "registerEmployer"
       | "roles"
       | "totalCompletedJobs"
       | "totalEmployers"
@@ -105,6 +141,10 @@ export interface DjobInterface extends Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "editEmployerProfile",
+    values: [string, string, string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "employers",
     values: [AddressLike]
   ): string;
@@ -113,10 +153,26 @@ export interface DjobInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getEmployerByAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEmployerEscrow",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getJobByID",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "hireFreelancer",
+    values: [BigNumberish, AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "registerEmployer",
+    values: [string, string, string, string]
+  ): string;
   encodeFunctionData(functionFragment: "roles", values: [AddressLike]): string;
   encodeFunctionData(
     functionFragment: "totalCompletedJobs",
@@ -146,13 +202,33 @@ export interface DjobInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "createJob", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "editEmployerProfile",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "employers", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "freelancers",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEmployerByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEmployerEscrow",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getJobByID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hireFreelancer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerEmployer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "roles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalCompletedJobs",
@@ -379,6 +455,12 @@ export interface Djob extends BaseContract {
     "nonpayable"
   >;
 
+  editEmployerProfile: TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
+
   employers: TypedContractMethod<
     [arg0: AddressLike],
     [
@@ -428,13 +510,37 @@ export interface Djob extends BaseContract {
     "view"
   >;
 
+  getEmployerByAddress: TypedContractMethod<
+    [_employer: AddressLike],
+    [Djob.EmployerStructOutput],
+    "view"
+  >;
+
+  getEmployerEscrow: TypedContractMethod<
+    [_employer: AddressLike, _job_id: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   getJobByID: TypedContractMethod<
     [jobId: BigNumberish],
     [Djob.JobStructOutput],
     "view"
   >;
 
+  hireFreelancer: TypedContractMethod<
+    [jobId: BigNumberish, freelancerAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   owner: TypedContractMethod<[], [string], "view">;
+
+  registerEmployer: TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
 
   roles: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
@@ -470,6 +576,13 @@ export interface Djob extends BaseContract {
     nameOrSignature: "createJob"
   ): TypedContractMethod<
     [_title: string, _description: string, _budget: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "editEmployerProfile"
+  ): TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
     [void],
     "nonpayable"
   >;
@@ -525,11 +638,39 @@ export interface Djob extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getEmployerByAddress"
+  ): TypedContractMethod<
+    [_employer: AddressLike],
+    [Djob.EmployerStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getEmployerEscrow"
+  ): TypedContractMethod<
+    [_employer: AddressLike, _job_id: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getJobByID"
   ): TypedContractMethod<[jobId: BigNumberish], [Djob.JobStructOutput], "view">;
   getFunction(
+    nameOrSignature: "hireFreelancer"
+  ): TypedContractMethod<
+    [jobId: BigNumberish, freelancerAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "registerEmployer"
+  ): TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "roles"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;

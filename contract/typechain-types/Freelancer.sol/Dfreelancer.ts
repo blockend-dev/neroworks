@@ -139,6 +139,8 @@ export interface DfreelancerInterface extends Interface {
       | "completeJob"
       | "createJob"
       | "depositFunds"
+      | "editEmployerProfile"
+      | "editFreelancerProfile"
       | "employers"
       | "freelancers"
       | "getAllFreelancers"
@@ -191,6 +193,14 @@ export interface DfreelancerInterface extends Interface {
   encodeFunctionData(
     functionFragment: "depositFunds",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "editEmployerProfile",
+    values: [string, string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "editFreelancerProfile",
+    values: [string, string, string, string, string, string[], BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "employers",
@@ -272,6 +282,14 @@ export interface DfreelancerInterface extends Interface {
   decodeFunctionResult(functionFragment: "createJob", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "depositFunds",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "editEmployerProfile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "editFreelancerProfile",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "employers", data: BytesLike): Result;
@@ -545,6 +563,26 @@ export interface Dfreelancer extends BaseContract {
 
   depositFunds: TypedContractMethod<[jobId: BigNumberish], [void], "payable">;
 
+  editEmployerProfile: TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
+
+  editFreelancerProfile: TypedContractMethod<
+    [
+      _name: string,
+      _skills: string,
+      _country: string,
+      _gigTitle: string,
+      _gigDesc: string,
+      _images: string[],
+      _starting_price: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   employers: TypedContractMethod<
     [arg0: AddressLike],
     [
@@ -700,6 +738,28 @@ export interface Dfreelancer extends BaseContract {
   getFunction(
     nameOrSignature: "depositFunds"
   ): TypedContractMethod<[jobId: BigNumberish], [void], "payable">;
+  getFunction(
+    nameOrSignature: "editEmployerProfile"
+  ): TypedContractMethod<
+    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "editFreelancerProfile"
+  ): TypedContractMethod<
+    [
+      _name: string,
+      _skills: string,
+      _country: string,
+      _gigTitle: string,
+      _gigDesc: string,
+      _images: string[],
+      _starting_price: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "employers"
   ): TypedContractMethod<
