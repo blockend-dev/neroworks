@@ -323,6 +323,42 @@ export const registerFreelancer = async (
   }
 };
 
+// edit freelancer profile
+export const editFreelancer = async (
+  accountSigner: ethers.Signer,
+  freelancerName :string,
+  freelancerSkills : string,
+  freelancerCountry : string,
+  freelancerGigTitle : string,
+  freelancerGigDesc:string,
+  images:string[],
+  starting_price:BigNumber,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    // Execute the edit freelancer function
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'editFreelancerProfile',
+      [freelancerName, freelancerSkills,freelancerCountry,
+      freelancerGigTitle,freelancerGigDesc, images,starting_price],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error editing freelancer profile:", error);
+    throw error;
+  }
+};
+
 // Register Employer
 export const registerEmployer = async (
   accountSigner: ethers.Signer,
@@ -350,6 +386,37 @@ export const registerEmployer = async (
     );
   } catch (error) {
     console.error("Error registering employer:", error);
+    throw error;
+  }
+};
+
+// edit employer profile
+export const editEmployer = async (
+  accountSigner: ethers.Signer,
+  name: string,
+  industry: string,
+  country: string,
+  imageURI: string,
+  paymentType: number = 0,
+  selectedToken: string = '',
+  options?: {
+    apiKey?: string;
+    gasMultiplier?: number;
+  }
+) => {
+  try {
+    return await executeOperation(
+      accountSigner,
+      CONTRACT_ADDRESSES.nftContract,
+      ABI,
+      'editEmployerProfile',
+      [name, industry, country, imageURI],
+      paymentType,
+      selectedToken,
+      options
+    );
+  } catch (error) {
+    console.error("Error editing employer:", error);
     throw error;
   }
 };
@@ -446,7 +513,7 @@ export const depositFunds = async (
   accountSigner: ethers.Signer,
   jobId: number,
   value: ethers.BigNumberish, 
-  paymentType: number = 0,
+  paymentType: number = 1,
   selectedToken: string = '',
   options?: {
     apiKey?: string;
@@ -459,7 +526,7 @@ export const depositFunds = async (
       CONTRACT_ADDRESSES.nftContract,
       ABI,
       'depositFunds',
-      [jobId],
+      [jobId,value],
       paymentType,
       selectedToken,
       options
