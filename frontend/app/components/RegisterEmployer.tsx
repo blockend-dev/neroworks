@@ -71,7 +71,7 @@ const RegisterEmployer = () => {
       if (response.data.IpfsHash) {
         const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
         setImageUri(ipfsUrl);
-        toast.success('Image uploaded to IPFS successfully!');
+        // toast.success('Image uploaded to IPFS successfully!');
         return ipfsUrl;
       } else {
         throw new Error('Invalid response from Pinata');

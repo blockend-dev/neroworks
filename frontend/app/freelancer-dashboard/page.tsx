@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getAllJobs, getFreelancerByAddress } from '@/utils/aaUtils';
+import { useEffect, useState, useMemo } from 'react';
+import { getAllJobs, getFreelancerByAddress, editFreelancer } from '@/utils/aaUtils';
 import { motion, useTransform, useMotionValue } from 'framer-motion'
 import Image from 'next/image';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import { getSigner, getSupportedTokens, initAAClient, initAABuilder } from '@/ut
 import { useWallet } from '../contexts/WalletContext';
 import { FiDollarSign, FiCheckCircle, FiClock, FiTrendingUp, FiSettings, FiUser, FiBriefcase, FiAward, FiMoon, FiSun } from 'react-icons/fi'
 import { AreaChart, Area, XAxis, ResponsiveContainer } from 'recharts'
+import EditFreelancerModal from '@/app/components/EditFreelancerModal'
 
 interface Job {
   id: number;
@@ -36,6 +37,7 @@ export default function FreelancerDashboard() {
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
   const [darkMode, setDarkMode] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Filter jobs by freelance and completion status
   const activeJobs = jobs.filter(job =>
@@ -105,6 +107,34 @@ export default function FreelancerDashboard() {
     loadTokens();
   }, [signer]);
 
+  const handleSave = async (formData) => {
+    if (!signer) return
+    try {
+      await editFreelancer(
+        signer,
+        formData.name,
+        formData.skills,
+        formData.country,
+        formData.gigTitle,
+        formData.gigDescription,
+        formData.images,
+        formData.starting_price
+      );
+
+      toast.success('Profile updated!')
+      const freelancerData = await getFreelancerByAddress(signer, aaAddress)
+      setFreelancer(freelancerData)
+    } catch (error) {
+      toast.error('Error updating profile!')
+      console.error("Error updating profile:", error);
+    }
+  };
+
+
+  // State management for the modal
+  const handleEditProfile = () => {
+    setShowEditModal(true);
+  };
 
   const fetchSupportedTokens = async () => {
     if (!signer) {
@@ -137,13 +167,31 @@ export default function FreelancerDashboard() {
     }
   };
 
-  // Animated background elements
+  const backgroundBalls = useMemo(() => {
+    return [...Array(10)].map(() => ({
+      width: `${Math.random() * 200 + 100}px`,
+      height: `${Math.random() * 200 + 100}px`,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      duration: 15 + Math.random() * 20
+    }));
+  }, []);
+
+
   const BackgroundElements = () => {
-    if (typeof window === 'undefined') return null; // Skip during SSR
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    if (!mounted) {
+      return null; // Avoid SSR mismatch
+    }
 
     return (
       <div className="fixed inset-0 overflow-hidden z-0 pointer-events-none">
-        {[...Array(10)].map((_, i) => (
+        {backgroundBalls.map((ball, i) => (
           <motion.div
             key={i}
             animate={{
@@ -152,22 +200,22 @@ export default function FreelancerDashboard() {
               rotate: [0, 180, 360]
             }}
             transition={{
-              duration: 15 + Math.random() * 20,
+              duration: ball.duration,
               repeat: Infinity,
               ease: "linear"
             }}
             className={`absolute rounded-full ${darkMode ? 'bg-indigo-900' : 'bg-indigo-100'} opacity-20`}
             style={{
-              width: `${Math.random() * 200 + 100}px`,
-              height: `${Math.random() * 200 + 100}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`
+              width: ball.width,
+              height: ball.height,
+              left: ball.left,
+              top: ball.top
             }}
           />
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   // 3D Profile Card Component
   const ProfileCard3D = ({ image }: any) => {
@@ -312,13 +360,23 @@ export default function FreelancerDashboard() {
                     </p>
                   </div>
 
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
+                  <button
+                    // whileHover={{ scale: 1.03 }}
+                    // whileTap={{ scale: 0.98 }}
+                    onClick={handleEditProfile}
                     className="px-6 py-2 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition-colors"
                   >
                     Edit Profile
-                  </motion.button>
+                  </button>
+
+                  {showEditModal && (
+                    <EditFreelancerModal
+                      freelancer={freelancer}
+                      onClose={() => setShowEditModal(false)}
+                      onSave={handleSave}
+                      darkMode={darkMode}
+                    />
+                  )}
                 </div>
 
                 <p className={`mt-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>

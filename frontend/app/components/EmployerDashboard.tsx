@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { getAllJobs } from '@/utils/aaUtils';
+import { getAllJobs,editEmployer } from '@/utils/aaUtils';
 import { ethers } from 'ethers';
+import { toast } from 'react-toastify'
 import JobCard from './JobCard';
 
 const EmployerDashboard = ({signer,aaAddress} :any) => {
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+    const [showEditModal, setShowEditModal] = useState(false);
+  const [employerData, setEmployerData] = useState(null); 
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -25,6 +28,28 @@ const EmployerDashboard = ({signer,aaAddress} :any) => {
 
     if (aaAddress) fetchJobs();
   }, [aaAddress]);
+
+    const handleSaveProfile = async (updatedData) => {
+    try {
+      // Call your contract function to update employer profile
+      await editEmployer(
+        updatedData.name,
+        updatedData.industry,
+        updatedData.country,
+        updatedData.imageURI
+      );
+      
+      // Update local state
+      setEmployerData(prev => ({
+        ...prev,
+        ...updatedData
+      }));
+      
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

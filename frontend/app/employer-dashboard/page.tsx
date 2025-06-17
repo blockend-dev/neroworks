@@ -13,10 +13,12 @@ import {
   releaseEscrow,
   completeJob,
   getEmployerEscrow,
-  getEmployerByAddress
+  getEmployerByAddress,
+  editEmployer
 } from '@/utils/aaUtils'
 import { useWallet } from '../contexts/WalletContext'
 import Image from 'next/image'
+import EditEmployerModal from '@/app/components/EditEmployerModal';
 
 type EscrowBalances = {
   [jobId: number]: ethers.BigNumber;
@@ -61,6 +63,8 @@ const EmployerDashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [escrowBalances, setEscrowBalances] = useState<EscrowBalances>({});
   const [employer, setEmployer] = useState<Employer>()
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false)
   const [newJobForm, setNewJobForm] = useState({
     title: '',
@@ -111,17 +115,44 @@ const EmployerDashboard = () => {
 
   useEffect(() => {
     async function refreshData() {
-       const employerData = await getEmployerByAddress(signer, aaAddress)
-        setEmployer(employerData)
-        const jobs = await getAllJobs(signer)
-        const employerJobs = jobs.filter((job:any) =>
-          job.employer.toLowerCase() === aaAddress.toLowerCase());
-        setJobs(employerJobs)
+      if (!signer) return
+      const employerData = await getEmployerByAddress(signer, aaAddress)
+      setEmployer(employerData)
+      const jobs = await getAllJobs(signer)
+      const employerJobs = jobs.filter((job: any) =>
+        job.employer.toLowerCase() === aaAddress.toLowerCase());
+      setJobs(employerJobs)
     }
 
     refreshData()
 
-  }, [signer,jobs]);
+  }, [signer, jobs]);
+
+  const handleSaveProfile = async (updatedData) => {
+    if (!signer) return
+    try {
+      await editEmployer(
+        signer,
+        updatedData.name,
+        updatedData.industry,
+        updatedData.country,
+        updatedData.imageURI
+      );
+
+      // Update local state
+      setEmployer(prev => ({
+        ...prev,
+        ...updatedData
+      }));
+
+      toast.success('Profile updated!')
+
+      setShowEditModal(false);
+    } catch (error) {
+      toast.error('Error updating profile')
+      console.error("Error updating profile:", error);
+    }
+  };
 
   // Handle job creation
   const handleCreateJob = async () => {
@@ -140,7 +171,7 @@ const EmployerDashboard = () => {
       )
       tx.transactionHash
       toast.success('Job created successfully!')
-    
+
       setNewJobForm({ title: '', description: '', budget: '' })
 
     } catch (error: any) {
@@ -370,13 +401,22 @@ const EmployerDashboard = () => {
             </div>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+          <button
+            onClick={() => setShowEditModal(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-full shadow-md hover:bg-blue-700 transition-colors"
           >
             Edit Profile
-          </motion.button>
+          </button>
+
+
+          {showEditModal && (
+            <EditEmployerModal
+              employer={employer}
+              onClose={() => setShowEditModal(false)}
+              onSave={handleSaveProfile}
+            // darkMode={darkMode}
+            />
+          )}
         </motion.div>
 
         {/* Stats Grid */}
@@ -389,7 +429,7 @@ const EmployerDashboard = () => {
           <StatCard
             icon={<FiDollarSign className="text-blue-500" size={24} />}
             label="Company Balance"
-            value={`Ξ ${ethers.utils.formatEther(employer?.balance || '0')}`}
+            value={`$ ${ethers.utils.formatEther(employer?.balance || '0')}`}
           />
           <StatCard
             icon={<FiUsers className="text-green-500" size={24} />}
@@ -401,11 +441,11 @@ const EmployerDashboard = () => {
             label="Active Jobs"
             value={0}
           />
-          <StatCard
+          {/* <StatCard
             icon={<FiDollarSign className="text-purple-500" size={24} />}
             label="Escrow Balance"
-            value={`Ξ ${escrowBalances}`}
-          />
+            value={`$ ${escrowBalances.toString()}`}
+          /> */}
         </motion.div>
 
         {/* Main Content */}
