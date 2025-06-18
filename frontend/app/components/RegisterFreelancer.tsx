@@ -23,6 +23,17 @@ const RegisterFreelancer = () => {
     image: null as File | null
   })
 
+  const [errors, setErrors] = useState({
+    freelancerName: '',
+    skills: '',
+    country: '',
+    gigTitle: '',
+    gigDesc: '',
+    startingPrice: '',
+    image: ''
+  });
+
+
   const [imageUri, setImageUri] = useState('')
   const [loading, setLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -73,11 +84,23 @@ const RegisterFreelancer = () => {
       return
     }
 
-    if (!formData.freelancerName || !formData.skills || !formData.country ||
-      !formData.gigTitle || !formData.gigDesc || !formData.startingPrice || !formData.image) {
-      toast.error('All fields are required!')
+    const newErrors = {
+      freelancerName: formData.freelancerName ? '' : 'Your name is required',
+      skills: formData.skills ? '' : 'Skills are required',
+      country: formData.country ? '' : 'Country is required',
+      gigTitle: formData.gigTitle ? '' : 'Gig title is required',
+      gigDesc: formData.gigDesc ? '' : 'Gig description is required',
+      startingPrice: formData.startingPrice ? '' : 'Starting price is required',
+      image: formData.image ? '' : 'Profile image is required'
+    }
+
+    setErrors(newErrors)
+
+    if (Object.values(newErrors).some(error => error)) {
+      toast.error('Please fill all required fields correctly!')
       return
     }
+
 
     setLoading(true)
 
@@ -158,12 +181,18 @@ const RegisterFreelancer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition 
+    ${errors.freelancerName ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.freelancerName}
-                    onChange={(e) => setFormData({ ...formData, freelancerName: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, freelancerName: e.target.value })
+                      setErrors({ ...errors, freelancerName: '' })
+                    }}
                     placeholder="John Doe"
-                    required
+                    
                   />
+                  {errors.freelancerName && <p className="text-sm text-red-600 mt-1">{errors.freelancerName}</p>}
+
                 </div>
 
                 {/* Skills */}
@@ -174,12 +203,16 @@ const RegisterFreelancer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition ${errors.skills ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.skills}
-                    onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                    placeholder="Web Development, UI/UX, Smart Contracts"
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, skills: e.target.value })
+                      setErrors({ ...errors, skills: '' })
+                    }}
+                    placeholder="Design, Web3, Writing"
+                    
                   />
+                  {errors.skills && <p className="text-sm text-red-600 mt-1">{errors.skills}</p>}
                 </div>
 
                 {/* Country */}
@@ -190,12 +223,18 @@ const RegisterFreelancer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition 
+    ${errors.country ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, country: e.target.value })
+                      setErrors({ ...errors, country: '' })
+                    }}
                     placeholder="United States"
-                    required
+                    
                   />
+                  {errors.country && <p className="text-sm text-red-600 mt-1">{errors.country}</p>}
+
                 </div>
 
                 {/* Gig Title */}
@@ -206,12 +245,36 @@ const RegisterFreelancer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition ${errors.gigTitle ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.gigTitle}
-                    onChange={(e) => setFormData({ ...formData, gigTitle: e.target.value })}
-                    placeholder="Senior Web3 Developer"
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, gigTitle: e.target.value })
+                      setErrors({ ...errors, gigTitle: '' })
+                    }}
+                    placeholder="I will design your website"
+                    
                   />
+                  {errors.gigTitle && <p className="text-sm text-red-600 mt-1">{errors.gigTitle}</p>}
+                </div>
+
+                {/* Gig Description */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <FiFileText className="text-indigo-500" />
+                    Gig Description
+                  </label>
+                  <textarea
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition ${errors.gigDesc ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
+                    value={formData.gigDesc}
+                    onChange={(e) => {
+                      setFormData({ ...formData, gigDesc: e.target.value })
+                      setErrors({ ...errors, gigDesc: '' })
+                    }}
+                    placeholder="Describe what your gig offers..."
+                    rows={4}
+                    
+                  ></textarea>
+                  {errors.gigDesc && <p className="text-sm text-red-600 mt-1">{errors.gigDesc}</p>}
                 </div>
 
                 {/* Starting Price */}
@@ -222,30 +285,16 @@ const RegisterFreelancer = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.01"
-                    min="0.01"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition ${errors.startingPrice ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.startingPrice}
-                    onChange={(e) => setFormData({ ...formData, startingPrice: e.target.value })}
-                    placeholder="0.1"
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, startingPrice: e.target.value })
+                      setErrors({ ...errors, startingPrice: '' })
+                    }}
+                    placeholder="100"
+                    
                   />
-                </div>
-
-                {/* Gig Description */}
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <FiFileText className="text-indigo-500" />
-                    Gig Description
-                  </label>
-                  <textarea
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    value={formData.gigDesc}
-                    onChange={(e) => setFormData({ ...formData, gigDesc: e.target.value })}
-                    placeholder="Describe your services, experience, and expertise..."
-                    rows={4}
-                    required
-                  />
+                  {errors.startingPrice && <p className="text-sm text-red-600 mt-1">{errors.startingPrice}</p>}
                 </div>
 
                 {/* Image Upload */}
@@ -280,11 +329,13 @@ const RegisterFreelancer = () => {
                           if (e.target.files && e.target.files[0]) {
                             const file = e.target.files[0]
                             setFormData({ ...formData, image: file })
+                               setErrors({ ...errors, image: '' })
                             handleImageUpload(file)
                           }
                         }}
-                        required
+                        
                       />
+                      {errors.image && <p className="text-sm text-red-600 mt-1">{errors.image}</p>}
                     </label>
                   </div>
                   {loading && (

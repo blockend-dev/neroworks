@@ -96,41 +96,64 @@ const RegisterEmployer = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    localStorage.removeItem('user_role')
-    console.log(signer, aaAddress)
+    e.preventDefault();
+    localStorage.removeItem('user_role');
+
+    const newErrors = {
+      employerName: !formData.employerName ? 'Company name is required' : '',
+      industry: !formData.industry ? 'Industry is required' : '',
+      country: !formData.country ? 'Country is required' : '',
+      image: !formData.image ? 'Company logo is required' : '',
+    };
+    setErrors(newErrors);
+
+    // If there are any errors, do not proceed
+    if (Object.values(newErrors).some((err) => err !== '')) {
+      toast.error('Please fix the form errors before submitting');
+      return;
+    }
+
     if (!signer || !aaAddress) {
-      toast.error('Please connect your wallet first!')
-      return
+      toast.error('Please connect your wallet first!');
+      return;
     }
 
-    if (!formData.employerName || !formData.industry || !formData.country || !imageUri) {
-      toast.error('All fields are required!')
-      return
-    }
-
-    setLoading(true)
+    setLoading(true);
     try {
-      const isFreelancer = await getFreelancerByAddress(signer, aaAddress)
+      const isFreelancer = await getFreelancerByAddress(signer, aaAddress);
       if (isFreelancer?.registered) {
-        toast.error('You already have a freelancer account!')
-        return
+        toast.error('You already have a freelancer account!');
+        return;
       }
-      const tx = await registerEmployer(signer, formData.employerName, formData.industry, formData.country, imageUri)
+
+      const tx = await registerEmployer(
+        signer,
+        formData.employerName,
+        formData.industry,
+        formData.country,
+        imageUri
+      );
+
       if (tx.transactionHash) {
-        toast.success('Employer registered successfully!')
-
+        toast.success('Employer registered successfully!');
         setTimeout(() => {
-          router.push('/employer-dashboard')
-        }, 3000)
+          router.push('/employer-dashboard');
+        }, 3000);
       }
-
     } catch (error) {
-      toast.error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+
+  const [errors, setErrors] = useState({
+    employerName: '',
+    industry: '',
+    country: '',
+    image: '',
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6">
@@ -170,12 +193,17 @@ const RegisterEmployer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition ${errors.employerName ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'
+                      }`}
                     value={formData.employerName}
-                    onChange={(e) => setFormData({ ...formData, employerName: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, employerName: e.target.value });
+                      setErrors({ ...errors, employerName: '' });
+                    }}
                     placeholder="Acme Inc."
-                    required
                   />
+                  {errors.employerName && <p className="text-sm text-red-600 mt-1">{errors.employerName}</p>}
+
                 </div>
 
                 {/* Industry */}
@@ -185,10 +213,14 @@ const RegisterEmployer = () => {
                     Industry
                   </label>
                   <select
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 rounded-lg transition 
+    ${errors.industry ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'} 
+    border focus:border-indigo-500 focus:ring-2`}
                     value={formData.industry}
-                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, industry: e.target.value });
+                      setErrors({ ...errors, industry: '' });
+                    }}
                   >
                     <option value="">Select your industry</option>
                     <option value="Technology">Technology</option>
@@ -197,6 +229,8 @@ const RegisterEmployer = () => {
                     <option value="Education">Education</option>
                     <option value="Other">Other</option>
                   </select>
+                  {errors.industry && <p className="text-sm text-red-600 mt-1">{errors.industry}</p>}
+
                 </div>
 
                 {/* Country */}
@@ -207,12 +241,17 @@ const RegisterEmployer = () => {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 transition 
+        ${errors.country ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}`}
                     value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, country: e.target.value });
+                      setErrors({ ...errors, country: '' });
+                    }}
                     placeholder="United States"
-                    required
                   />
+                  {errors.country && <p className="text-sm text-red-600 mt-1">{errors.country}</p>}
+
                 </div>
 
                 {/* Image Upload */}
@@ -246,11 +285,22 @@ const RegisterEmployer = () => {
                         accept="image/*"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
-                            const file = e.target.files[0]
-                            setFormData({ ...formData, image: file })
-                            handleImageUpload(file)
+                            const file = e.target.files[0];
+                            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                              toast.error('Only JPG and PNG files are allowed');
+                              return;
+                            }
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error('Image must be under 5MB');
+                              return;
+                            }
+
+                            setFormData({ ...formData, image: file });
+                            setErrors({ ...errors, image: '' });
+                            handleImageUpload(file);
                           }
                         }}
+
                       />
                     </label>
                   </div>
