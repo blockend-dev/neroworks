@@ -64,6 +64,7 @@ export default function FreelancerDashboard() {
   }, [signer, aaAddress]);
 
   useEffect(() => {
+    if(!signer) return
     async function refreshData() {
       const freelancerData = await getFreelancerByAddress(signer, aaAddress)
       setFreelancer(freelancerData)
@@ -107,7 +108,7 @@ export default function FreelancerDashboard() {
     loadTokens();
   }, [signer]);
 
-  const handleSave = async (formData) => {
+  const handleSave = async (formData:any) => {
     if (!signer) return
     try {
       await editFreelancer(

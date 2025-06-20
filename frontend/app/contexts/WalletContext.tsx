@@ -10,7 +10,7 @@ interface WalletContextType {
     mode: WalletMode;
     eoaAddress: string;
     aaAddress: string;
-    signer: ethers.providers.JsonRpcSigner | null;
+    signer: ethers.providers.JsonRpcSigner;
     isConnected: boolean;
     isLoading: boolean;
     error: string | null;
@@ -25,7 +25,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     const [mode, setMode] = useState<WalletMode>(null);
     const [eoaAddress, setEoaAddress] = useState('');
     const [aaAddress, setAaAddress] = useState('');
-    const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner| null>(null);
+    const [signer, setSigner] = useState<any>();
     const [isConnected, setIsConnected] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         setMode(null);
         setEoaAddress('');
         setAaAddress('');
-        setSigner(null);
+        // setSigner('');
         setIsConnected(false);
     };
 
