@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { uploadToIPFS } from "@/utils/uploadToIPFS"
 
 
-export default function EditEmployerModal({ employer, onClose, onSave, darkMode }) {
+export default function EditEmployerModal({ employer, onClose, onSave, darkMode }:any) {
   const [formData, setFormData] = useState({
     name: '',
     industry: '',

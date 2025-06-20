@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX } from 'react-icons/fi';
 import { uploadToIPFS } from "@/utils/uploadToIPFS"
 
-const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }) => {
+const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
   const [hydrated, setHydrated] = useState(false);
 
   const [formData, setFormData] = useState({
