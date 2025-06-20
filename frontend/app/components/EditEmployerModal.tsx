@@ -4,22 +4,45 @@ import { motion } from 'framer-motion';
 import { FiUpload, FiX } from 'react-icons/fi';
 import { useDropzone } from 'react-dropzone';
 import { useState, useEffect } from 'react';
-import { uploadToIPFS } from "@/utils/uploadToIPFS"
+import { uploadToIPFS } from '@/utils/uploadToIPFS';
 
+interface Employer {
+  name: string;
+  industry: string;
+  country: string;
+  image?: string;
+}
 
-export default function EditEmployerModal({ employer, onClose, onSave, darkMode }:any) {
+interface EditEmployerModalProps {
+  employer: Employer;
+  onClose: () => void;
+  onSave: (data: {
+    name: string;
+    industry: string;
+    country: string;
+    imageURI: string;
+  }) => Promise<void>;
+  darkMode?: boolean;
+}
+
+export default function EditEmployerModal({
+  employer,
+  onClose,
+  onSave,
+  darkMode = false,
+}: EditEmployerModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     industry: '',
     country: '',
-    imageURI: ''
+    imageURI: '',
   });
 
-  const [previewImage, setPreviewImage] = useState(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-
 
   useEffect(() => {
     if (employer && !hydrated) {
@@ -27,59 +50,57 @@ export default function EditEmployerModal({ employer, onClose, onSave, darkMode 
         name: employer.name || '',
         industry: employer.industry || '',
         country: employer.country || '',
-        imageURI: employer.image || ''
+        imageURI: employer.image || '',
       });
       setPreviewImage(employer.image || null);
       setHydrated(true);
     }
-  }, [employer]);
+  }, [employer, hydrated]);
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*',
+    accept: { 'image/*': [] },
     maxFiles: 1,
-    onDrop: async acceptedFiles => {
+    onDrop: async (acceptedFiles: File[]) => {
       setUploading(true);
       try {
         const file = acceptedFiles[0];
+        setImageFile(file);
         setPreviewImage(URL.createObjectURL(file));
-        // Store the file to upload later
-        setFormData(prev => ({ ...prev, _imageFile: file }));
       } finally {
         setUploading(false);
       }
-    }
+    },
   });
 
   const removeImage = () => {
+    setImageFile(null);
     setPreviewImage(null);
-    setFormData(prev => ({ ...prev, _imageFile: null, imageURI: '' }));
+    setFormData((prev) => ({ ...prev, imageURI: '' }));
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     let imageURI = formData.imageURI;
 
-    // Upload new image if one was selected
-    if (formData._imageFile) {
-      imageURI = await uploadToIPFS(formData._imageFile);
+    if (imageFile) {
+      imageURI = await uploadToIPFS(imageFile);
     }
 
     await onSave({
       name: formData.name,
       industry: formData.industry,
       country: formData.country,
-      imageURI
+      imageURI,
     });
 
-    setLoading(false)
-
+    setLoading(false);
     onClose();
   };
 
@@ -152,14 +173,13 @@ export default function EditEmployerModal({ employer, onClose, onSave, darkMode 
               ) : (
                 <div
                   {...getRootProps()}
-                  className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${darkMode ? 'border-gray-600' : 'border-gray-300'
-                    }`}
+                  className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${
+                    darkMode ? 'border-gray-600' : 'border-gray-300'
+                  }`}
                 >
                   <input {...getInputProps()} />
                   <FiUpload className="mx-auto text-2xl mb-2 text-indigo-500" />
-                  <p className="text-sm">
-                    Drag & drop logo here, or click to select
-                  </p>
+                  <p className="text-sm">Drag & drop logo here, or click to select</p>
                   {uploading && <p className="text-xs mt-2">Uploading...</p>}
                 </div>
               )}
@@ -180,7 +200,6 @@ export default function EditEmployerModal({ employer, onClose, onSave, darkMode 
               className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
             >
               {uploading ? 'Saving...' : loading ? 'Updating profile' : 'Save Changes'}
-
             </button>
           </div>
         </form>

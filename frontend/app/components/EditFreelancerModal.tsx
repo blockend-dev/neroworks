@@ -6,6 +6,12 @@ import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX } from 'react-icons/fi';
 import { uploadToIPFS } from "@/utils/uploadToIPFS"
 
+type ImagePreview = {
+  url: string;
+  name: string;
+  file?: File;
+};
+
 const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
   const [hydrated, setHydrated] = useState(false);
 
@@ -16,11 +22,12 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
     gigTitle: '',
     gigDescription: '',
     starting_price: 0,
-    images: []
+    images: [] as string[]
   });
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [previewImages, setPreviewImages] = useState([]);
+
+const [previewImages, setPreviewImages] = useState<ImagePreview[]>([]);
 
   useEffect(() => {
     if (!freelancer || hydrated) return;
@@ -36,7 +43,7 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
     });
 
     if (freelancer.images?.length > 0) {
-      const previews = freelancer.images.map(img => ({
+      const previews = freelancer.images.map((img:any) => ({
         url: img,
         name: 'Current Image'
       }));
@@ -56,7 +63,7 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
 
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*',
+    accept: { 'image/*': [] },
     maxFiles: 2,
     onDrop: async acceptedFiles => {
       setUploading(true);
@@ -76,7 +83,7 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
     }
   });
 
-  const removeImage = (index) => {
+  const removeImage = (index:any) => {
     setPreviewImages(prev => {
       const removed = prev[index];
       if (removed?.url && removed.file) {
@@ -86,12 +93,12 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
     });
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
 
     setLoading(true)
@@ -101,7 +108,7 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
         .filter(img => img.file) // Only new files
         .map(async img => {
 
-          const cid = await uploadToIPFS(img.file);
+          const cid = await uploadToIPFS(img.file!);
           console.log(cid)
           return cid
         })
@@ -209,7 +216,7 @@ const EditFreelancerModal = ({ freelancer, onClose, onSave, darkMode }:any) => {
                   name="gigDescription"
                   value={formData.gigDescription}
                   onChange={handleChange}
-                  rows="4"
+                  rows={4}
                   className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
                   required
                 />
