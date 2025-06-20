@@ -14,7 +14,7 @@ interface Employer {
 }
 
 interface EditEmployerModalProps {
-  employer: Employer;
+  employer: any;
   onClose: () => void;
   onSave: (data: {
     name: string;

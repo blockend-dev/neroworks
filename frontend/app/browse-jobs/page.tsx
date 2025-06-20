@@ -140,7 +140,7 @@ const BrowseJobs = () => {
 
           {/* Expanded Filters (collapsed by default) */}
           <AnimatePresence>
-            {false && ( // Change to true to show filters
+            {false && ( 
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}

@@ -128,7 +128,7 @@ const EmployerDashboard = () => {
 
   }, [signer, jobs]);
 
-  const handleSaveProfile = async (updatedData) => {
+  const handleSaveProfile = async (updatedData:any) => {
     if (!signer) return
     try {
       await editEmployer(
@@ -161,6 +161,9 @@ const EmployerDashboard = () => {
       return
     }
 
+    if (!signer) return
+
+
     try {
       setIsLoading(true)
       const tx = await createJob(
@@ -184,6 +187,7 @@ const EmployerDashboard = () => {
   // Handle freelancer hiring
   const handleHireFreelancer = async (jobId: any, freelancerAddress: any) => {
     try {
+    if (!signer) return
       setIsLoading(true)
       await hireFreelancer(signer, jobId, freelancerAddress)
       toast.success('Freelancer hired successfully!')
@@ -201,6 +205,8 @@ const EmployerDashboard = () => {
   // Handle fund deposit
   const handleDepositFunds = async (jobId: any, value: any) => {
     try {
+    if (!signer) return
+
       setIsLoading(true)
       await depositFunds(signer, jobId, ethers.utils.parseEther(value))
       toast.success('Funds deposited to escrow!')
@@ -221,6 +227,8 @@ const EmployerDashboard = () => {
   // Handle escrow release
   const handleReleaseEscrow = async (jobId: any, freelancerAddress: any) => {
     try {
+    if (!signer) return
+
       setIsLoading(true)
       await releaseEscrow(signer, jobId, freelancerAddress)
       toast.success('Payment released to freelancer!')
@@ -245,6 +253,8 @@ const EmployerDashboard = () => {
   // Handle job completion
   const handleCompleteJob = async (jobId: number, freelancerAddress: string) => {
     try {
+    if (!signer) return
+
       setIsLoading(true)
       await completeJob(signer, jobId, freelancerAddress)
       toast.success('Job marked as completed!')
