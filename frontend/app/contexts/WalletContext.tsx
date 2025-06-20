@@ -1,95 +1,98 @@
-"use client"
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+'use client'
+import { createContext, useContext, useState, useEffect } from 'react';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getSigner, getAAWalletAddress } from '../../utils/aaUtils';
-import { toast } from 'react-toastify';
+
+type WalletMode = 'privy-aa' | 'traditional' | null;
 
 interface WalletContextType {
-    isConnected: boolean;
-    isLoading: boolean;
+    mode: WalletMode;
     eoaAddress: string;
     aaAddress: string;
-    signer : any;
+    signer: ethers.providers.JsonRpcSigner | null;
+    isConnected: boolean;
+    isLoading: boolean;
     error: string | null;
-    connectWallet: () => Promise<void>;
-    disconnectWallet: () => void;
+    connectTraditional: () => Promise<void>;
+    connectSocial: () => Promise<void>;
+    disconnect: () => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isConnected, setIsConnected] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
+    const [mode, setMode] = useState<WalletMode>(null);
     const [eoaAddress, setEoaAddress] = useState('');
     const [aaAddress, setAaAddress] = useState('');
-    const [signer ,setSigner] = useState<any>('')
+    const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner| null>(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    // Privy hooks
+    const { login, authenticated, user } = usePrivy();
+    const { wallets: privyWallets } = useWallets();
 
-    const connectWallet = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
+    // Connect traditional wallet (MetaMask)
+    const connectTraditional = async () => {
+        setIsLoading(true);
+        setError(null);
 
-            const signer = await getSigner();
-            if (!signer) throw new Error("Failed to get signer");
-            setSigner(signer)
-            const address = await signer.getAddress();
-            const aaWalletAddress = await getAAWalletAddress(signer);
+        const signer = await getSigner();
+        const address = await signer.getAddress();
+        const aaWalletAddress = await getAAWalletAddress(signer);
 
-            setEoaAddress(address);
-            setAaAddress(aaWalletAddress);
-            setIsConnected(true);
-            toast.success('Wallet connected successfully!');
-
-
-        } catch (error: any) {
-            console.error("Error connecting wallet:", error);
-            setError(error.message || "Failed to connect wallet");
-        } finally {
-            setIsLoading(false);
-        }
+        setSigner(signer);
+        setEoaAddress(address);
+        setAaAddress(aaWalletAddress);
+        setMode('traditional');
+        setIsConnected(true);
     };
 
-    const disconnectWallet = () => {
-        setIsConnected(false);
+    // Connect via Privy social login
+    const connectSocial = async () => {
+        await login();
+    };
+
+    // Handle Privy connection
+    useEffect(() => {
+        if (authenticated && privyWallets[0]) {
+            const setupPrivyWallet = async () => {
+                const privyWallet = privyWallets[0];
+                console.log(privyWallet,'pv')
+                const provider = new ethers.providers.Web3Provider(await privyWallet.getEthereumProvider());
+                const signer = provider.getSigner()
+
+                setSigner(signer);
+                setEoaAddress(privyWallet.address);
+                setAaAddress(privyWallet.address);
+                setMode('privy-aa');
+            };
+            setupPrivyWallet();
+        }
+    }, [authenticated, privyWallets]);
+
+    const disconnect = () => {
+        setMode(null);
         setEoaAddress('');
         setAaAddress('');
+        setSigner(null);
+        setIsConnected(false);
     };
-
-    // Check initial connection & listen for changes
-    useEffect(() => {
-        const checkWalletConnection = async () => {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                if (accounts.length > 0) await connectWallet();
-            }
-        };
-
-        checkWalletConnection();
-
-        const handleAccountsChanged = (accounts: string[]) => {
-            if (accounts.length === 0) disconnectWallet();
-            else connectWallet();
-        };
-
-        window.ethereum?.on('accountsChanged', handleAccountsChanged);
-        return () => {
-            window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
-        };
-    }, []);
 
     return (
         <WalletContext.Provider
             value={{
-                isConnected,
-                isLoading,
+                mode,
                 eoaAddress,
                 aaAddress,
-                error,
                 signer,
-                connectWallet,
-                disconnectWallet,
+                connectTraditional,
+                connectSocial,
+                disconnect,
+                isConnected,
+                isLoading,
+                error
             }}
         >
             {children}

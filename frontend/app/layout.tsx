@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import Navbar from "./components/Navbar";
 import { WalletProvider } from "./contexts/WalletContext";
 import WalletConnect from "./components/WalletComponent";
+import { Providers } from "./providers/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <WalletProvider>
+        <Providers>
           <WalletConnect />
-          <Navbar /> {/* Conditionally hidden inside Navbar itself */}
-          {children}
+          <Navbar />
           <ToastContainer />
-        </WalletProvider>
+          {children} 
+        </Providers>
 
       </body>
     </html>

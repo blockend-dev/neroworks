@@ -7,20 +7,21 @@ import { FiBriefcase, FiUser, FiHome, FiPlusCircle, FiSearch, FiLogOut } from 'r
 import { useWallet } from '../contexts/WalletContext'
 import { getFreelancerByAddress, getEmployerByAddress } from '@/utils/aaUtils'
 import { ethers } from 'ethers'
+import { AuthSelector } from './AuthSelector'
 
 const Navbar = () => {
   const pathname = usePathname()
   const router = useRouter()
-  const { signer, aaAddress, disconnectWallet } = useWallet()
+  const { signer, aaAddress, disconnect } = useWallet()
   const [role, setRole] = useState<'freelancer' | 'employer' | null>(null)
   const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-   useEffect(() => {
+  useEffect(() => {
     const storedRole = localStorage.getItem('user_role') as 'freelancer' | 'employer' | null;
     setRole(storedRole);
   }, []);
-  
+
   // Check user role from blockchain
   useEffect(() => {
     const checkRole = async () => {
@@ -64,7 +65,7 @@ const Navbar = () => {
   if (pathname === '/' || pathname === '/register') return null
 
   const handleDisconnect = () => {
-    disconnectWallet()
+    disconnect()
     localStorage.removeItem('user_role')
     router.push('/')
   }
@@ -143,7 +144,7 @@ const Navbar = () => {
             </AnimatePresence>
 
             {/* Disconnect Button */}
-            {aaAddress && (
+            {aaAddress ? (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -153,6 +154,8 @@ const Navbar = () => {
                 <FiLogOut />
                 <span className="hidden md:inline">Disconnect</span>
               </motion.button>
+            ) : (
+              <AuthSelector />
             )}
           </div>
 
@@ -232,7 +235,7 @@ const Navbar = () => {
                 </>
               )}
 
-              {aaAddress && (
+              {aaAddress ? (
                 <button
                   onClick={() => {
                     handleDisconnect()
@@ -243,6 +246,10 @@ const Navbar = () => {
                   <FiLogOut />
                   Disconnect
                 </button>
+              ) : (
+                <div className="px-3 py-2">
+                  <AuthSelector />
+                </div>
               )}
             </div>
           </motion.div>
