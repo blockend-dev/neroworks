@@ -50,7 +50,7 @@ export default function FreelancerDashboard() {
     (async () => {
       try {
         setLoading(true)
-        const data = await getFreelancerByAddress(signer, aaAddress);
+        const data = await getFreelancerByAddress(signer, aaAddress.toString());
         console.log(data)
         setFreelancer(data.props ?? data);
         const allJobs = await getAllJobs(signer);
@@ -64,9 +64,11 @@ export default function FreelancerDashboard() {
   }, [signer, aaAddress]);
 
   useEffect(() => {
-    if(!signer) return
+    // if(!signer) return
+    // console.log(aaAddress.toString())
+
     async function refreshData() {
-      const freelancerData = await getFreelancerByAddress(signer, aaAddress)
+      const freelancerData = await getFreelancerByAddress(signer, aaAddress.toString())
       setFreelancer(freelancerData)
       const allJobs = await getAllJobs(signer);
       setJobs(allJobs);

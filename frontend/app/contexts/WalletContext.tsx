@@ -1,8 +1,9 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getSigner, getAAWalletAddress } from '../../utils/aaUtils';
+import { toast } from 'react-toastify';
 
 type WalletMode = 'privy-aa' | 'traditional' | null;
 
@@ -17,6 +18,7 @@ interface WalletContextType {
     connectTraditional: () => Promise<void>;
     connectSocial: () => Promise<void>;
     disconnect: () => void;
+    hydrated: boolean
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -29,9 +31,44 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     const [isConnected, setIsConnected] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [hydrated, setHydrated] = useState(false);
     // Privy hooks
     const { login, authenticated, user } = usePrivy();
     const { wallets: privyWallets } = useWallets();
+    const { createWallet } = useCreateWallet();
+
+    useEffect(() => {
+        if (authenticated !== undefined) {
+            setHydrated(true);
+        }
+    }, [authenticated]);
+
+    // Handle Privy connection
+    useEffect(() => {
+
+        hydratePrivyWallet();
+    }, [authenticated, privyWallets, hydrated]);
+
+    const hydratePrivyWallet = async () => {
+        if (!authenticated) return;
+        try {
+            const privyWallet = privyWallets[0];
+            const provider = new ethers.providers.Web3Provider(
+                await privyWallet.getEthereumProvider()
+            );
+            const signer = provider.getSigner();
+            setSigner(signer);
+            setEoaAddress(privyWallet.address);
+            setAaAddress(privyWallet.address);
+            setMode('privy-aa');
+            setIsConnected(true);
+        } catch (err) {
+            console.error('Error setting up Privy wallet:', err);
+            setError('Failed to initialize wallet');
+        } finally {
+            setHydrated(true);
+        }
+    };
 
     // Connect traditional wallet (MetaMask)
     const connectTraditional = async () => {
@@ -51,26 +88,30 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Connect via Privy social login
     const connectSocial = async () => {
-        await login();
-    };
+        try {
+            if (!authenticated) {
+                await login(); // prompts login
+                await new Promise((res) => setTimeout(res, 500));
+                await createWallet(); // triggers wallet creation
+                toast.success("Wallet created successfully!");
+            }
 
-    // Handle Privy connection
-    useEffect(() => {
-        if (authenticated && privyWallets[0]) {
-            const setupPrivyWallet = async () => {
-                const privyWallet = privyWallets[0];
-                console.log(privyWallet,'pv')
-                const provider = new ethers.providers.Web3Provider(await privyWallet.getEthereumProvider());
-                const signer = provider.getSigner()
-
-                setSigner(signer);
-                setEoaAddress(privyWallet.address);
-                setAaAddress(privyWallet.address);
-                setMode('privy-aa');
-            };
-            setupPrivyWallet();
+            
+        } catch (err) {
+            console.error("Social login/wallet creation failed:", err);
+            toast.error("Failed to sign in or create wallet.");
         }
-    }, [authenticated, privyWallets]);
+    }
+
+    useEffect(() => {
+        console.log(user)
+        console.log('hydrated?', hydrated);
+        console.log('authenticated?', authenticated);
+        console.log('privyWallets?', privyWallets);
+    }, [hydrated, authenticated, privyWallets]);
+
+
+
 
     const disconnect = () => {
         setMode(null);
@@ -92,7 +133,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
                 disconnect,
                 isConnected,
                 isLoading,
-                error
+                error,
+                hydrated
             }}
         >
             {children}

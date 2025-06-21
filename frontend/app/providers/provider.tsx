@@ -7,13 +7,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={{
-        loginMethods: ['google', 'github', 'discord'],
         embeddedWallets: {
           createOnLogin: 'users-without-wallets'
         },
         appearance: {
           theme: 'light',
-          logo: '/logo.png'
+          logo: '/logo.png',
         }
       }}
     >

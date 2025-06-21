@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { FiLogOut, FiUser } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { toast } from 'react-toastify';
+import { usePrivy } from "@privy-io/react-auth";
+
 
 const WalletConnect = () => {
   const {
@@ -14,14 +17,30 @@ const WalletConnect = () => {
     connectTraditional,
     connectSocial,
     disconnect,
+    hydrated
   } = useWallet();
 
   const [showDropdown, setShowDropdown] = useState(false);
+    const { login, authenticated, user } = usePrivy();
 
-  const handleSocialConnect = (provider: "google" | "discord" | "github") => {
-    setShowDropdown(false);
-    connectSocial();
-  };
+const handleSocialConnect = async (provider: "google" | "discord" | "github") => {
+  if (!hydrated) return null; 
+
+  setShowDropdown(false);
+
+  try {
+    // Check if already logged in
+    if (!isConnected) {
+      await connectSocial(); 
+    } else {
+      console.log(authenticated,'he')
+      console.log("User already logged in. Skipping login.");
+    }
+  } catch (err) {
+    console.error("Social login error:", err);
+  }
+};
+
 
   return (
     <div className="relative">
