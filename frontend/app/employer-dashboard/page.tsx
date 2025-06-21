@@ -19,6 +19,8 @@ import {
 import { useWallet } from '../contexts/WalletContext'
 import Image from 'next/image'
 import EditEmployerModal from '@/app/components/EditEmployerModal';
+import { getSigner, getAAWalletAddress } from '../../utils/aaUtils';
+
 
 type EscrowBalances = {
   [jobId: number]: ethers.BigNumber;
@@ -89,6 +91,7 @@ const EmployerDashboard = () => {
       try {
         const employerData = await getEmployerByAddress(signer, aaAddress)
         setEmployer(employerData)
+        console.log(employerData)
         const jobsData = await getAllJobs(signer)
         // Filter jobs by employer address
         const employerJobs = jobsData.filter((job: any) =>

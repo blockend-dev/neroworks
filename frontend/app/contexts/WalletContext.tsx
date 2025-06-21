@@ -56,10 +56,17 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
             const provider = new ethers.providers.Web3Provider(
                 await privyWallet.getEthereumProvider()
             );
-            const signer = provider.getSigner();
-            setSigner(signer);
-            setEoaAddress(privyWallet.address);
-            setAaAddress(privyWallet.address);
+            // const signer = provider.getSigner();
+            // setSigner(signer);
+            // setEoaAddress(privyWallet.address);
+            // setAaAddress(privyWallet.address);
+
+             const signer = await getSigner();
+        const address = await signer.getAddress();
+        const aaWalletAddress = await getAAWalletAddress(signer);
+        setSigner(signer);
+        setEoaAddress(address);
+        setAaAddress(aaWalletAddress);
             setMode('privy-aa');
             setIsConnected(true);
         } catch (err) {
@@ -78,7 +85,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         const signer = await getSigner();
         const address = await signer.getAddress();
         const aaWalletAddress = await getAAWalletAddress(signer);
-
+        // console.log(aaWalletAddress,'here')
         setSigner(signer);
         setEoaAddress(address);
         setAaAddress(aaWalletAddress);
