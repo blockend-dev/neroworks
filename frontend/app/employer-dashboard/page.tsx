@@ -198,6 +198,7 @@ const EmployerDashboard = () => {
       // Refresh jobs list
       const updatedJobs = await getAllJobs(signer)
       setJobs(updatedJobs)
+      console.log(jobs)
     } catch (error: any) {
       toast.error(`Hiring failed: ${error.message}`)
     } finally {
@@ -211,7 +212,7 @@ const EmployerDashboard = () => {
     if (!signer) return
 
       setIsLoading(true)
-      await depositFunds(signer, jobId, ethers.utils.parseEther(value))
+      await depositFunds(signer, jobId.toString(), ethers.utils.parseEther(value))
       toast.success('Funds deposited to escrow!')
 
       // Refresh escrow balance
@@ -493,7 +494,7 @@ const EmployerDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Budget (ETH)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Budget </label>
                   <input
                     type="number"
                     value={newJobForm.budget}
@@ -577,7 +578,7 @@ const EmployerDashboard = () => {
                     <div key={job.id} className="border-b border-gray-100 pb-3">
                       <h4 className="font-medium">{job.title}</h4>
                       <p className="text-sm text-gray-500">
-                        Paid: Ξ {ethers.utils.formatEther(job.budget)}
+                        Paid: USDC {ethers.utils.formatEther(job.budget)}
                       </p>
                     </div>
                   ))

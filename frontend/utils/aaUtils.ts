@@ -629,6 +629,31 @@ export const getAllJobs = async (signer: ethers.providers.JsonRpcSigner) => {
   return await contract.allJobs();
 };
 
+
+export const getJobByID = async (signer: ethers.providers.JsonRpcSigner, jobId: number) => {
+  const contract = new ethers.Contract(
+   CONTRACT_ADDRESSES.nftContract,
+    ABI,
+    signer
+  );
+  
+  try {
+    const job = await contract.getJobByID(jobId);
+    return {
+      id: jobId,
+      title: job.title,
+      description: job.description,
+      budget: job.budget.toString(),
+      completed: job.completed,
+      employer: job.employer,
+      applicants: job.applicants || [],
+      hiredFreelancer: job.hiredFreelancer
+    };
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    return null;
+  }
+};
 export const getAllFreelancers = async (signer: ethers.providers.JsonRpcSigner) => {
   const contract = new ethers.Contract(CONTRACT_ADDRESSES.nftContract, ABI, signer);
   return await contract.getAllFreelancers();
