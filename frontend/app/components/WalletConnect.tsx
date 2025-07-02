@@ -14,40 +14,40 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onWalletConnected }) => {
   const [error, setError] = useState<string | null>(null);
   
   // Check if wallet is already connected on component mount
-  useEffect(() => {
-    const checkWalletConnection = async () => {
-      try {
-        if (window.ethereum) {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts && accounts.length > 0) {
-            await connectWallet();
-          }
-        }
-      } catch (error) {
-        console.error("Error checking wallet connection:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkWalletConnection = async () => {
+  //     try {
+  //       if (window.ethereum) {
+  //         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+  //         if (accounts && accounts.length > 0) {
+  //           await connectWallet();
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking wallet connection:", error);
+  //     }
+  //   };
     
-    checkWalletConnection();
+  //   checkWalletConnection();
     
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
-        if (accounts.length === 0) {
-          disconnectWallet();
-        } else {
-          connectWallet();
-        }
-      });
-    }
+  //   // Listen for account changes
+  //   if (window.ethereum) {
+  //     window.ethereum.on('accountsChanged', (accounts: string[]) => {
+  //       if (accounts.length === 0) {
+  //         disconnectWallet();
+  //       } else {
+  //         connectWallet();
+  //       }
+  //     });
+  //   }
     
-    return () => {
-      // Clean up event listeners
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', () => {});
-      }
-    };
-  }, []);
+  //   return () => {
+  //     // Clean up event listeners
+  //     if (window.ethereum) {
+  //       window.ethereum.removeListener('accountsChanged', () => {});
+  //     }
+  //   };
+  // }, []);
  
   const connectWallet = async () => {
     try {
@@ -95,41 +95,41 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onWalletConnected }) => {
   };
 
   // Check if wallet is already connected on component mount
-  useEffect(() => {
-    const checkWalletConnection = async () => {
-      // Check if ethereum is available and accounts are connected
-      try {
-        if (window.ethereum) {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts && accounts.length > 0) {
-            await connectWallet();
-          }
-        }
-      } catch (error) {
-        console.error("Error checking wallet connection:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkWalletConnection = async () => {
+  //     // Check if ethereum is available and accounts are connected
+  //     try {
+  //       if (window.ethereum) {
+  //         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+  //         if (accounts && accounts.length > 0) {
+  //           await connectWallet();
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking wallet connection:", error);
+  //     }
+  //   };
     
-    checkWalletConnection();
+  //   checkWalletConnection();
     
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
-        if (accounts.length === 0) {
-          disconnectWallet();
-        } else {
-          connectWallet();
-        }
-      });
-    }
+  //   // Listen for account changes
+  //   if (window.ethereum) {
+  //     window.ethereum.on('accountsChanged', (accounts: string[]) => {
+  //       if (accounts.length === 0) {
+  //         disconnectWallet();
+  //       } else {
+  //         connectWallet();
+  //       }
+  //     });
+  //   }
     
-    return () => {
-      // Clean up event listeners
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', () => {});
-      }
-    };
-  }, []);
+  //   return () => {
+  //     // Clean up event listeners
+  //     if (window.ethereum) {
+  //       window.ethereum.removeListener('accountsChanged', () => {});
+  //     }
+  //   };
+  // }, []);
 
   return (
     <div className="wallet-container">

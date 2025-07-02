@@ -49,32 +49,26 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         hydratePrivyWallet();
     }, [authenticated, privyWallets, hydrated]);
 
+    const privyWalletConnect = privyWallets.find((w) => w.walletClientType === "privy");
     const hydratePrivyWallet = async () => {
-        if (!authenticated) return;
-        try {
-            const privyWallet = privyWallets[0];
-            const provider = new ethers.providers.Web3Provider(
-                await privyWallet.getEthereumProvider()
-            );
-            // const signer = provider.getSigner();
-            // setSigner(signer);
-            // setEoaAddress(privyWallet.address);
-            // setAaAddress(privyWallet.address);
-
-             const signer = await getSigner();
-        const address = await signer.getAddress();
-        const aaWalletAddress = await getAAWalletAddress(signer);
-        setSigner(signer);
-        setEoaAddress(address);
-        setAaAddress(aaWalletAddress);
-            setMode('privy-aa');
-            setIsConnected(true);
-        } catch (err) {
-            console.error('Error setting up Privy wallet:', err);
-            setError('Failed to initialize wallet');
-        } finally {
-            setHydrated(true);
+        if (privyWalletConnect && !signer) {
+            try {
+                const ethereumProvider = await privyWalletConnect.getEthereumProvider();
+                const ethersProvider = new ethers.providers.Web3Provider(
+                    ethereumProvider
+                );
+                setSigner(ethersProvider.getSigner());
+                setAaAddress(privyWalletConnect.address);
+                setMode('privy-aa');
+                setIsConnected(true);
+            } catch (err) {
+                console.error('Error setting up Privy wallet:', err);
+                setError('Failed to initialize wallet');
+            } finally {
+                setHydrated(true);
+            }
         }
+
     };
 
     // Connect traditional wallet (MetaMask)
@@ -97,13 +91,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     const connectSocial = async () => {
         try {
             if (!authenticated) {
-                await login(); // prompts login
+                login(); // prompts login
                 await new Promise((res) => setTimeout(res, 500));
                 await createWallet(); // triggers wallet creation
                 toast.success("Wallet created successfully!");
             }
 
-            
+
         } catch (err) {
             console.error("Social login/wallet creation failed:", err);
             toast.error("Failed to sign in or create wallet.");
