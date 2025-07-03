@@ -592,7 +592,7 @@ const EmployerDashboard = () => {
               </div>
             </motion.div>
 
-            {/* Completed Jobs */}
+          {/* Completed Jobs */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

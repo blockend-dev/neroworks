@@ -101,7 +101,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 
         } catch (err) {
             console.error("Social login/wallet creation failed:", err);
-            toast.error("Failed to sign in or create wallet.");
+            // toast.error("Failed to sign in or create wallet.");
         }
     }
 
