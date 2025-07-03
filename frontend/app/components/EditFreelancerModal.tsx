@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { FiUpload, FiX } from 'react-icons/fi';
 import { uploadToIPFS } from "@/utils/uploadToIPFS"
+import { ethers } from 'ethers';
 
 type ImagePreview = {
   url: string;
@@ -187,7 +188,7 @@ const [previewImages, setPreviewImages] = useState<ImagePreview[]>([]);
                 <input
                   type="number"
                   name="starting_price"
-                  value={formData.starting_price}
+                  value={ethers.utils.formatEther(formData.starting_price)}
                   onChange={handleChange}
                   className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
                   min="0"

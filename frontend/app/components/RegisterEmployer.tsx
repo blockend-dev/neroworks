@@ -128,6 +128,7 @@ const RegisterEmployer = () => {
 
       const tx = await registerEmployer(
         signer,
+        aaAddress,
         formData.employerName,
         formData.industry,
         formData.country,

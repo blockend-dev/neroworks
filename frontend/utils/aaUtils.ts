@@ -363,6 +363,7 @@ export const editFreelancer = async (
 // Register Employer
 export const registerEmployer = async (
   accountSigner: ethers.Signer,
+  creator : string,
   name: string,
   industry: string,
   country: string,
@@ -380,7 +381,7 @@ export const registerEmployer = async (
       CONTRACT_ADDRESSES.nftContract,
       ABI,
       'registerEmployer',
-      [name, industry, country, imageURI],
+      [creator, name, industry, country, imageURI],
       paymentType,
       selectedToken,
       options

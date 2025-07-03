@@ -53,6 +53,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     const hydratePrivyWallet = async () => {
         if (privyWalletConnect && !signer) {
             try {
+                await connectSocial()
                 const ethereumProvider = await privyWalletConnect.getEthereumProvider();
                 const ethersProvider = new ethers.providers.Web3Provider(
                     ethereumProvider
@@ -90,11 +91,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     // Connect via Privy social login
     const connectSocial = async () => {
         try {
+            if(authenticated && !signer){
+                 await createWallet();
+            }
             if (!authenticated) {
                 login(); // prompts login
-                await new Promise((res) => setTimeout(res, 500));
-                await createWallet(); // triggers wallet creation
-                toast.success("Wallet created successfully!");
             }
 
 
