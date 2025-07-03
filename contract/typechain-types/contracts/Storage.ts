@@ -35,6 +35,7 @@ export interface StorageInterface extends Interface {
       | "totalEmployers"
       | "totalFreelancers"
       | "totalJobs"
+      | "walletToUser"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -69,6 +70,10 @@ export interface StorageInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "totalJobs", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "walletToUser",
+    values: [AddressLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "allFreelancerAddresses",
@@ -99,6 +104,10 @@ export interface StorageInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "totalJobs", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "walletToUser",
+    data: BytesLike
+  ): Result;
 }
 
 export interface Storage extends BaseContract {
@@ -233,6 +242,8 @@ export interface Storage extends BaseContract {
 
   totalJobs: TypedContractMethod<[], [bigint], "view">;
 
+  walletToUser: TypedContractMethod<[arg0: AddressLike], [string], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -333,6 +344,9 @@ export interface Storage extends BaseContract {
   getFunction(
     nameOrSignature: "totalJobs"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "walletToUser"
+  ): TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   filters: {};
 }

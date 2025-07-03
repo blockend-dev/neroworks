@@ -921,6 +921,11 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
           "internalType": "string",
           "name": "_name",
           "type": "string"
@@ -948,6 +953,11 @@
     },
     {
       "inputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
         {
           "internalType": "string",
           "name": "_name",
@@ -1079,10 +1089,22 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "withdrawEarnings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "walletToUser",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ]

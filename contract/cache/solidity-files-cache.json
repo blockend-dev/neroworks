@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/workspaces/neroworks/contract/contracts/Storage.sol": {
-      "lastModificationDate": 1750094292486,
-      "contentHash": "2ec0702a627b2ff5cf28337c3428a6d1",
+      "lastModificationDate": 1751468251063,
+      "contentHash": "cc8369cc804607957bb44541887a2d28",
       "sourceName": "contracts/Storage.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -90,8 +90,8 @@
       ]
     },
     "/workspaces/neroworks/contract/contracts/EmployerLogic.sol": {
-      "lastModificationDate": 1750092862163,
-      "contentHash": "de507549e5cba92c689c2733153b3ee1",
+      "lastModificationDate": 1751469034830,
+      "contentHash": "a043d4a371078ea89202d61e2109f8c7",
       "sourceName": "contracts/EmployerLogic.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -135,8 +135,8 @@
       ]
     },
     "/workspaces/neroworks/contract/contracts/JobLogic.sol": {
-      "lastModificationDate": 1750043642916,
-      "contentHash": "c0d72609c056e76e90093680b8bec03c",
+      "lastModificationDate": 1751476191614,
+      "contentHash": "131f31a8db09f32cacb5d62a18db3385",
       "sourceName": "contracts/JobLogic.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -180,8 +180,8 @@
       ]
     },
     "/workspaces/neroworks/contract/contracts/FreelancerLogic.sol": {
-      "lastModificationDate": 1750095320652,
-      "contentHash": "0acd4412bd9ea9c93106833866bac37a",
+      "lastModificationDate": 1751475825231,
+      "contentHash": "5fd3d929fe3987d3d9304b1d0dcdb4e9",
       "sourceName": "contracts/FreelancerLogic.sol",
       "solcConfig": {
         "version": "0.8.24",

@@ -12,7 +12,6 @@ contract JobLogic is Storage {
     function applyForJob(uint jobId) public {
         require(jobId > 0 && jobId <= totalJobs, "JDE");
         Job storage job = jobs[jobId];
-        require(job.employer != address(0), "JNF");
 
         for (uint i = 0; i < job.applicants.length; i++) {
             if (job.applicants[i] == msg.sender) revert YHA();
@@ -24,7 +23,9 @@ contract JobLogic is Storage {
     function hireFreelancer(uint jobId, address freelancerAddress) public {
         require(jobId > 0 && jobId <= totalJobs, "JDE");
         Job storage job = jobs[jobId];
-        require(job.employer == msg.sender, "WR");
+        address user = walletToUser[msg.sender];
+        require(job.employer == user, "WR");
+        
         require(!isFreelancerHired(job, freelancerAddress), "FAH");
 
         job.hiredFreelancer = freelancerAddress;
@@ -33,7 +34,8 @@ contract JobLogic is Storage {
     function completeJob(uint jobId, address freelancerAddress) public {
         require(jobId > 0 && jobId <= totalJobs, "JDE");
         Job storage job = jobs[jobId];
-        require(job.employer == msg.sender);
+        address user = walletToUser[msg.sender];
+        require(job.employer == user);
         require(isFreelancerHired(job, freelancerAddress), "FNH");
 
         job.completed = true;
@@ -57,3 +59,4 @@ contract JobLogic is Storage {
         return job.hiredFreelancer == freelancer;
     }
 }
+

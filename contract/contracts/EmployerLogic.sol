@@ -14,7 +14,8 @@ contract EmployerLogic is Storage {
     event FundsReleased(uint jobId, address freelancerAddress, uint amount);
 
     modifier onlyEmployer() {
-        if (roles[msg.sender] != 1) revert WR_E();
+        address user = walletToUser[msg.sender];
+        if (roles[msg.sender] != 1 && roles[user] != 1) revert WR_E();
         _;
     }
 
@@ -22,70 +23,73 @@ contract EmployerLogic is Storage {
         props = employers[_employer];
     }
 
-    
     function getEmployerEscrow(address _employer, uint256 _job_id) external view returns(uint){
         return escrowFunds[_employer][_job_id];
-
     }
 
-    function registerEmployer(string memory _name, string memory _industry, string memory _country, string memory _imageURI) public {
+    function registerEmployer(address creator, string memory _name, string memory _industry, string memory _country, string memory _imageURI) public {
         if (roles[msg.sender] != 0) revert AR_E();
         require(bytes(_name).length > 0);
         require(bytes(_industry).length > 0);
 
         totalEmployers++;
         roles[msg.sender] = 1;
-        employers[msg.sender] = Employer(msg.sender, _name, _industry, 0, _country, _imageURI, true, block.timestamp);
+        walletToUser[msg.sender] = creator;
+        employers[creator] = Employer(creator, _name, _industry, 0, _country, _imageURI, true, block.timestamp);
 
-        emit EmployerRegistered(msg.sender, _name);
+        emit EmployerRegistered(creator, _name);
     }
 
     function createJob(string memory _title, string memory _description, uint256 _budget) public onlyEmployer {
         totalJobs++;
         uint8 jobId = totalJobs;
-             jobs[jobId] = Job(jobId,payable(msg.sender),_title,_description,_budget,false,new address[](0),address(0));    
+        address user = walletToUser[msg.sender];
+        jobs[jobId] = Job(jobId, user, _title, _description, _budget, false, new address[](0), address(0));
         emit JobCreated(jobId, _title);
     }
 
     function depositFunds(uint jobId) public payable onlyEmployer {
         require(jobId > 0 && jobId <= totalJobs, "JDE_E");
+        address user = walletToUser[msg.sender];
         Job storage job = jobs[jobId];
-        require(job.employer == msg.sender);
+        require(job.employer == user);
         require(!job.completed, "JNC_E");
         require(msg.value >= job.budget, "IF");
 
-        employers[msg.sender].balance += msg.value;
-        escrowFunds[msg.sender][jobId] += msg.value;
+        employers[user].balance += msg.value;
+        escrowFunds[user][jobId] += msg.value;
         emit FundsDeposited(jobId, msg.sender, msg.value);
     }
 
     function releaseEscrow(uint jobId, address freelancerAddress) public onlyEmployer {
         require(jobId > 0 && jobId <= totalJobs, "JDE_E");
+        address user = walletToUser[msg.sender];
         Job storage job = jobs[jobId];
         require(job.completed, "JNC_E");
 
-        uint amount = escrowFunds[msg.sender][jobId];
+        uint amount = escrowFunds[user][jobId];
         require(amount > 0, "NFE_E");
         require(amount >= job.budget, "IF");
 
-        escrowFunds[msg.sender][jobId] = 0;
+        escrowFunds[user][jobId] = 0;
         freelancers[freelancerAddress].balance += amount;
-        employers[msg.sender].balance -= amount;
+        employers[user].balance -= amount;
         emit FundsReleased(jobId, freelancerAddress, amount);
     }
 
-     function editEmployerProfile(
+    function editEmployerProfile(
         string memory _name,
         string memory _industry,
         string memory _country,
         string memory _imageURI
     ) external onlyEmployer {
         if (bytes(_name).length == 0 || bytes(_industry).length == 0) revert II_E();
-        
-        Employer storage employer = employers[msg.sender];
+        address user = walletToUser[msg.sender];
+        Employer storage employer = employers[user];
         employer.name = _name;
         employer.industry = _industry;
         employer.country = _country;
         employer.image = _imageURI;
     }
 }
+

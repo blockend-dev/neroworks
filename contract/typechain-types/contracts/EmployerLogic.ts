@@ -77,6 +77,7 @@ export interface EmployerLogicInterface extends Interface {
       | "totalEmployers"
       | "totalFreelancers"
       | "totalJobs"
+      | "walletToUser"
   ): FunctionFragment;
 
   getEvent(
@@ -127,7 +128,7 @@ export interface EmployerLogicInterface extends Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "registerEmployer",
-    values: [string, string, string, string]
+    values: [AddressLike, string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "releaseEscrow",
@@ -147,6 +148,10 @@ export interface EmployerLogicInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "totalJobs", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "walletToUser",
+    values: [AddressLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "allFreelancerAddresses",
@@ -202,6 +207,10 @@ export interface EmployerLogicInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "totalJobs", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "walletToUser",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace EmployerRegisteredEvent {
@@ -419,7 +428,13 @@ export interface EmployerLogic extends BaseContract {
   owner: TypedContractMethod<[], [string], "view">;
 
   registerEmployer: TypedContractMethod<
-    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [
+      creator: AddressLike,
+      _name: string,
+      _industry: string,
+      _country: string,
+      _imageURI: string
+    ],
     [void],
     "nonpayable"
   >;
@@ -439,6 +454,8 @@ export interface EmployerLogic extends BaseContract {
   totalFreelancers: TypedContractMethod<[], [bigint], "view">;
 
   totalJobs: TypedContractMethod<[], [bigint], "view">;
+
+  walletToUser: TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -559,7 +576,13 @@ export interface EmployerLogic extends BaseContract {
   getFunction(
     nameOrSignature: "registerEmployer"
   ): TypedContractMethod<
-    [_name: string, _industry: string, _country: string, _imageURI: string],
+    [
+      creator: AddressLike,
+      _name: string,
+      _industry: string,
+      _country: string,
+      _imageURI: string
+    ],
     [void],
     "nonpayable"
   >;
@@ -585,6 +608,9 @@ export interface EmployerLogic extends BaseContract {
   getFunction(
     nameOrSignature: "totalJobs"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "walletToUser"
+  ): TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   getEvent(
     key: "EmployerRegistered"

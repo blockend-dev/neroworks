@@ -75,6 +75,7 @@ export interface JobLogicInterface extends Interface {
       | "totalEmployers"
       | "totalFreelancers"
       | "totalJobs"
+      | "walletToUser"
   ): FunctionFragment;
 
   getEvent(
@@ -130,6 +131,10 @@ export interface JobLogicInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "totalJobs", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "walletToUser",
+    values: [AddressLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "allFreelancerAddresses",
@@ -174,6 +179,10 @@ export interface JobLogicInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "totalJobs", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "walletToUser",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace AppliedForJobEvent {
@@ -374,6 +383,8 @@ export interface JobLogic extends BaseContract {
 
   totalJobs: TypedContractMethod<[], [bigint], "view">;
 
+  walletToUser: TypedContractMethod<[arg0: AddressLike], [string], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -501,6 +512,9 @@ export interface JobLogic extends BaseContract {
   getFunction(
     nameOrSignature: "totalJobs"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "walletToUser"
+  ): TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   getEvent(
     key: "AppliedForJob"

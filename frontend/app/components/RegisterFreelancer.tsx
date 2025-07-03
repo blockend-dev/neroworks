@@ -105,6 +105,7 @@ const RegisterFreelancer = () => {
     setLoading(true)
 
     try {
+      console.log(aaAddress,signer)
       // Check if already registered as employer
       const isEmployer = await getEmployerByAddress(signer, aaAddress)
       if (isEmployer.employerAddress.toString() !== ethers.constants.AddressZero) {
@@ -118,6 +119,7 @@ const RegisterFreelancer = () => {
       // Register freelancer
       const tx = await registerFreelancer(
         signer,
+        aaAddress,
         formData.freelancerName,
         formData.skills,
         formData.country,

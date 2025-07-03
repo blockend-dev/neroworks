@@ -12,17 +12,16 @@ contract FreelancerLogic is Storage {
     event WithdrawFund(address freelancer, uint amount);
 
     modifier onlyFreelancer() {
-        if (roles[msg.sender] != 2) revert WR_F();
+        address user = walletToUser[msg.sender];
+        if (roles[msg.sender] != 2 && roles[user] != 2) revert WR_F();
         _;
     }
-
 
     function getFreelancerByAddress(address _freelancer) external view returns(Freelancer memory props){
         props = freelancers[_freelancer];
     }
 
-
-    function registerFreelancer(string memory _name, string memory _skills, string memory _country,
+    function registerFreelancer(address creator, string memory _name, string memory _skills, string memory _country,
         string memory _gigTitle, string memory _gigDesc, string[] memory _images, uint256 _starting_price
     ) public {
         if (roles[msg.sender] != 0) revert AR_F();
@@ -31,17 +30,19 @@ contract FreelancerLogic is Storage {
 
         totalFreelancers++;
         roles[msg.sender] = 2;
-        freelancers[msg.sender] = Freelancer(msg.sender, _name, _skills, 0, _country, _gigTitle, _gigDesc, _images, 0, true, block.timestamp, _starting_price);
-        allFreelancerAddresses.push(msg.sender);
-        emit FreelancerRegistered(msg.sender, _images, _starting_price);
+        walletToUser[msg.sender] = creator;
+        
+        freelancers[creator] = Freelancer(creator, _name, _skills, 0, _country, _gigTitle, _gigDesc, _images, 0, true, block.timestamp, _starting_price);
+        allFreelancerAddresses.push(creator);
+        emit FreelancerRegistered(creator, _images, _starting_price);
     }
 
     function editFreelancerProfile(string memory _name, string memory _skills, string memory _country,
         string memory _gigTitle, string memory _gigDesc, string[] memory _images, uint256 _starting_price
     ) external onlyFreelancer {
         if (bytes(_name).length == 0 || bytes(_skills).length == 0) revert II_F();
-
-        Freelancer storage f = freelancers[msg.sender];
+        address user = walletToUser[msg.sender];
+        Freelancer storage f = freelancers[user];
         f.name = _name;
         f.skills = _skills;
         f.country = _country;
@@ -51,15 +52,4 @@ contract FreelancerLogic is Storage {
         f.starting_price = _starting_price;
     }
 
-    function withdrawEarnings() public onlyFreelancer {
-        Freelancer storage f = freelancers[msg.sender];
-        require(f.balance > 0, "NBW");
-
-        uint toTransfer = (f.balance * 95) / 100;
-        f.balance = 0;
-        (bool success, ) = msg.sender.call{value: toTransfer}("");
-        require(success, "TF");
-
-        emit WithdrawFund(msg.sender, toTransfer);
-    }
 }

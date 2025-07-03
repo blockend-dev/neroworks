@@ -51,4 +51,5 @@ contract Storage {
     mapping(address => mapping(uint256 => uint)) public escrowFunds;
     mapping(address => uint8) public roles;
     address[] public allFreelancerAddresses;
+    mapping(address => address) public walletToUser;
 }

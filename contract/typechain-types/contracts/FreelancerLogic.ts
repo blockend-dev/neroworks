@@ -85,7 +85,7 @@ export interface FreelancerLogicInterface extends Interface {
       | "totalEmployers"
       | "totalFreelancers"
       | "totalJobs"
-      | "withdrawEarnings"
+      | "walletToUser"
   ): FunctionFragment;
 
   getEvent(
@@ -120,7 +120,16 @@ export interface FreelancerLogicInterface extends Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "registerFreelancer",
-    values: [string, string, string, string, string, string[], BigNumberish]
+    values: [
+      AddressLike,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string[],
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(functionFragment: "roles", values: [AddressLike]): string;
   encodeFunctionData(
@@ -137,8 +146,8 @@ export interface FreelancerLogicInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "totalJobs", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "withdrawEarnings",
-    values?: undefined
+    functionFragment: "walletToUser",
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -183,7 +192,7 @@ export interface FreelancerLogicInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "totalJobs", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawEarnings",
+    functionFragment: "walletToUser",
     data: BytesLike
   ): Result;
 }
@@ -367,6 +376,7 @@ export interface FreelancerLogic extends BaseContract {
 
   registerFreelancer: TypedContractMethod<
     [
+      creator: AddressLike,
       _name: string,
       _skills: string,
       _country: string,
@@ -389,7 +399,7 @@ export interface FreelancerLogic extends BaseContract {
 
   totalJobs: TypedContractMethod<[], [bigint], "view">;
 
-  withdrawEarnings: TypedContractMethod<[], [void], "nonpayable">;
+  walletToUser: TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -502,6 +512,7 @@ export interface FreelancerLogic extends BaseContract {
     nameOrSignature: "registerFreelancer"
   ): TypedContractMethod<
     [
+      creator: AddressLike,
       _name: string,
       _skills: string,
       _country: string,
@@ -529,8 +540,8 @@ export interface FreelancerLogic extends BaseContract {
     nameOrSignature: "totalJobs"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "withdrawEarnings"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "walletToUser"
+  ): TypedContractMethod<[arg0: AddressLike], [string], "view">;
 
   getEvent(
     key: "FreelancerRegistered"
