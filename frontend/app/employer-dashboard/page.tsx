@@ -67,6 +67,12 @@ const EmployerDashboard = () => {
   const [employer, setEmployer] = useState<Employer>()
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const [creatingJob, setCreatingJob] = useState(false);
+  const [hiringFreelancerId, setHiringFreelancerId] = useState<number | null>(null);
+  const [depositingJobId, setDepositingJobId] = useState<number | null>(null);
+  const [releasingJobId, setReleasingJobId] = useState<number | null>(null);
+  const [completingJobId, setCompletingJobId] = useState<number | null>(null);
+
   const [isLoading, setIsLoading] = useState(false)
   const [newJobForm, setNewJobForm] = useState({
     title: '',
@@ -82,6 +88,14 @@ const EmployerDashboard = () => {
   const completedJobs = jobs.filter(job =>
     job.employer.toLowerCase() === aaAddress.toLowerCase() && job.completed
   );
+
+  const totalHires = jobs.filter(
+    job =>
+      job.employer?.toLowerCase() === aaAddress.toLowerCase() &&
+      job.hiredFreelancer &&
+      job.hiredFreelancer !== ethers.constants.AddressZero
+  );
+
   // Fetch all employer data
   useEffect(() => {
     const fetchEmployerData = async () => {
@@ -131,7 +145,7 @@ const EmployerDashboard = () => {
 
   }, [signer, jobs]);
 
-  const handleSaveProfile = async (updatedData:any) => {
+  const handleSaveProfile = async (updatedData: any) => {
     if (!signer) return
     try {
       await editEmployer(
@@ -168,7 +182,7 @@ const EmployerDashboard = () => {
 
 
     try {
-      setIsLoading(true)
+      setCreatingJob(true);
       const tx = await createJob(
         signer,
         newJobForm.title,
@@ -183,35 +197,34 @@ const EmployerDashboard = () => {
     } catch (error: any) {
       toast.error(`Job creation failed: ${error.message}`)
     } finally {
-      setIsLoading(false)
+      setCreatingJob(false);
     }
   }
 
   // Handle freelancer hiring
-  const handleHireFreelancer = async (jobId: any, freelancerAddress: any) => {
-    try {
-    if (!signer) return
-      setIsLoading(true)
-      await hireFreelancer(signer, jobId, freelancerAddress)
-      toast.success('Freelancer hired successfully!')
+  const handleHireFreelancer = async (jobId: number, freelancerAddress: string) => {
+    if (!signer) return;
 
-      // Refresh jobs list
-      const updatedJobs = await getAllJobs(signer)
-      setJobs(updatedJobs)
-      console.log(jobs)
+    try {
+      setHiringFreelancerId(jobId);
+      await hireFreelancer(signer, jobId, freelancerAddress);
+      toast.success('Freelancer hired successfully!');
+      const updatedJobs = await getAllJobs(signer);
+      setJobs(updatedJobs);
     } catch (error: any) {
-      toast.error(`Hiring failed: ${error.message}`)
+      toast.error(`Hiring failed: ${error.message}`);
     } finally {
-      setIsLoading(false)
+      setHiringFreelancerId(null);
     }
-  }
+  };
+
 
   // Handle fund deposit
   const handleDepositFunds = async (jobId: any, value: any) => {
     try {
-    if (!signer) return
+      if (!signer) return
 
-      setIsLoading(true)
+      setDepositingJobId(jobId);
       await depositFunds(signer, jobId.toString(), ethers.utils.parseEther(value))
       toast.success('Funds deposited to escrow!')
 
@@ -224,54 +237,54 @@ const EmployerDashboard = () => {
     } catch (error: any) {
       toast.error(`Deposit failed: ${error.message}`)
     } finally {
-      setIsLoading(false)
+      setDepositingJobId(null);
     }
   }
 
   // Handle escrow release
-  const handleReleaseEscrow = async (jobId: any, freelancerAddress: any) => {
+  const handleReleaseEscrow = async (jobId: number, freelancerAddress: string) => {
     try {
-    if (!signer) return
+      if (!signer) return;
 
-      setIsLoading(true)
-      await releaseEscrow(signer, jobId, freelancerAddress)
-      toast.success('Payment released to freelancer!')
+      setReleasingJobId(jobId);
+      await releaseEscrow(signer, jobId, freelancerAddress);
+      toast.success('Payment released to freelancer!');
 
-      // Refresh data
       const [updatedJobs, updatedEscrow] = await Promise.all([
         getAllJobs(signer),
         getEmployerEscrow(signer, aaAddress, jobId)
-      ])
-      setJobs(updatedJobs)
+      ]);
+      setJobs(updatedJobs);
       setEscrowBalances(prev => ({
         ...prev,
         [jobId]: updatedEscrow
-      }))
+      }));
     } catch (error: any) {
-      toast.error(`Payment release failed: ${error.message}`)
+      toast.error(`Payment release failed: ${error.message}`);
     } finally {
-      setIsLoading(false)
+      setReleasingJobId(null);
     }
-  }
+  };
+
 
   // Handle job completion
   const handleCompleteJob = async (jobId: number, freelancerAddress: string) => {
     try {
-    if (!signer) return
+      if (!signer) return;
 
-      setIsLoading(true)
-      await completeJob(signer, jobId, freelancerAddress)
-      toast.success('Job marked as completed!')
+      setCompletingJobId(jobId);
+      await completeJob(signer, jobId, freelancerAddress);
+      toast.success('Job marked as completed!');
 
-      // Refresh jobs list
-      const updatedJobs = await getAllJobs(signer)
-      setJobs(updatedJobs)
+      const updatedJobs = await getAllJobs(signer);
+      setJobs(updatedJobs);
     } catch (error: any) {
-      toast.error(`Completion failed: ${error.message}`)
+      toast.error(`Completion failed: ${error.message}`);
     } finally {
-      setIsLoading(false)
+      setCompletingJobId(null);
     }
-  }
+  };
+
 
   // Stats data
   const hiringData = [
@@ -319,22 +332,27 @@ const EmployerDashboard = () => {
                       className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
                       onClick={() => {
                         if (job.applicants.length > 0) {
-                          handleHireFreelancer(job.id, job.applicants[0])
+                          handleHireFreelancer(job.id, job.applicants[0]);
                         }
                       }}
+                      disabled={hiringFreelancerId === job.id}
                     >
-                      {job.applicants.length > 0 ? 'Hire Applicant' : 'No Applicants'}
+                      {hiringFreelancerId === job.id ? 'Hiring...' :
+                        (job.applicants.length > 0 ? 'Hire Applicant' : 'No Applicants')}
                     </motion.button>
+
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm"
                       onClick={() => {
-                        const value = prompt('Enter amount to deposit (ETH):', ethers.utils.formatEther(job.budget))
-                        if (value) handleDepositFunds(job.id, value)
+                        const value = prompt('Enter amount to deposit (ETH):', ethers.utils.formatEther(job.budget));
+                        if (value) handleDepositFunds(job.id, value);
                       }}
+                      disabled={depositingJobId === job.id}
                     >
-                      Add Funds
+                      {depositingJobId === job.id ? 'Depositing...' : 'Add Funds'}
                     </motion.button>
+
                   </>
                 ) : (
                   <>
@@ -342,16 +360,28 @@ const EmployerDashboard = () => {
                       whileHover={{ scale: 1.05 }}
                       className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm"
                       onClick={() => handleReleaseEscrow(job.id, job.hiredFreelancer)}
+                      disabled={releasingJobId === job.id}
                     >
-                      <FiSend size={14} className="inline mr-1" /> Release Payment
+                      {releasingJobId === job.id ? 'Releasing...' : (
+                        <>
+                          <FiSend size={14} className="inline mr-1" /> Release Payment
+                        </>
+                      )}
                     </motion.button>
+
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
                       onClick={() => handleCompleteJob(job.id, job.hiredFreelancer)}
+                      disabled={completingJobId === job.id}
                     >
-                      <FiCheck size={14} className="inline mr-1" /> Mark Complete
+                      {completingJobId === job.id ? 'Completing...' : (
+                        <>
+                          <FiCheck size={14} className="inline mr-1" /> Mark Complete
+                        </>
+                      )}
                     </motion.button>
+
                   </>
                 )}
               </div>
@@ -448,12 +478,12 @@ const EmployerDashboard = () => {
           <StatCard
             icon={<FiUsers className="text-green-500" size={24} />}
             label="Total Hires"
-            value={0}
+            value={totalHires?.length}
           />
           <StatCard
             icon={<FiBriefcase className="text-yellow-500" size={24} />}
             label="Active Jobs"
-            value={0}
+            value={activeJobs?.length}
           />
           {/* <StatCard
             icon={<FiDollarSign className="text-purple-500" size={24} />}
@@ -509,15 +539,12 @@ const EmployerDashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCreateJob}
-                  disabled={isLoading}
+                  disabled={creatingJob}
                   className="flex items-center justify-center gap-2 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  {isLoading ? 'Creating...' : (
-                    <>
-                      <FiPlus /> Create Job
-                    </>
-                  )}
+                  {creatingJob ? 'Creating...' : (<><FiPlus /> Create Job</>)}
                 </motion.button>
+
               </div>
             </motion.div>
 
@@ -571,7 +598,7 @@ const EmployerDashboard = () => {
               animate={{ opacity: 1 }}
               className="bg-white rounded-xl shadow-sm p-6"
             >
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Completed Jobs</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Completed(Paid) Jobs</h2>
               <div className="space-y-3">
                 {completedJobs.length > 0 ? (
                   completedJobs.slice(0, 3).map(job => (
